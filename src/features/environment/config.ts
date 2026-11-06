@@ -16,8 +16,8 @@ export const ENV_CONFIG = {
   },
   overlay: {
     /** Verschmutzung, bei der der Smog ca. 63 % seiner maximalen Deckkraft hat */
-    scale: 1.5,
-    maxAlpha: 0.6,
+    scale: 0.6,
+    maxAlpha: 0.65,
   },
   monsters: {
     /** Unter dieser Gesamtverschmutzung spawnen keine Monster */
