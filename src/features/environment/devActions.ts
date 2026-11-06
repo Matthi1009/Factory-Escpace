@@ -2,8 +2,15 @@
 import type { Game } from '../../core';
 import type { MonsterManager } from './monsters/MonsterManager';
 import { MONSTER_TYPES } from './monsters/types';
+import type { WaveSystem } from './monsters/waves';
 
-export function registerDevActions(game: Game, monsters: MonsterManager): void {
+export function registerDevActions(game: Game, monsters: MonsterManager, waves: WaveSystem): void {
+  game.registries.actions.register({
+    id: 'environment:debug_wave',
+    name: 'Angriffswelle ankündigen (10 Monster)',
+    category: 'debug',
+    run: () => waves.announce(10),
+  });
   game.registries.actions.register({
     id: 'environment:debug_spawn',
     name: '5 Käfer spawnen',

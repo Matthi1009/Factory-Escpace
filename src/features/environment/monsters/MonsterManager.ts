@@ -41,6 +41,8 @@ export class MonsterManager {
   private kills = 0;
   /** Wird aufgerufen, wenn ein Monster stirbt (z. B. für Effekte) */
   onDeath: ((m: Monster) => void) | null = null;
+  /** Geschützte Gebäude (z. B. im Kraftfeld) können nicht beschädigt werden */
+  isProtected: (b: Building) => boolean = () => false;
 
   constructor(private game: Game) {
     this.field = new FlowField(game);
@@ -209,6 +211,7 @@ export class MonsterManager {
     if (m.cooldown > 0) return;
     m.cooldown = m.type.attackTicks;
     m.lunge = 1;
+    if (this.isProtected(b)) return;
     this.game.damageBuilding(b, m.type.damage);
   }
 

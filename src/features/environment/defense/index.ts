@@ -1,14 +1,17 @@
 // Verteidigung: Mauern und Geschütztürme registrieren, Reichweiten-Vorschau zeichnen.
 import type { Game } from '../../../core';
+import type { Climate } from '../climate';
 import { ENV_CONFIG } from '../config';
 import type { Effects } from '../effects';
 import type { MonsterManager } from '../monsters/MonsterManager';
 import { WALL_DEF } from './Wall';
+import { ForceFieldSystem } from './ForceField';
 import { createTurretDef, TURRET_ID } from './Turret';
 
-export function registerDefense(game: Game, monsters: MonsterManager, effects: Effects): void {
+export function registerDefense(game: Game, monsters: MonsterManager, effects: Effects, climate: Climate): void {
   game.registries.buildings.register(WALL_DEF);
   game.registries.buildings.register(createTurretDef(monsters, effects));
+  new ForceFieldSystem(game, monsters, climate, effects);
 
   // Reichweite anzeigen: beim Bauen eines Turms und beim Zeigen auf einen Turm
   game.renderer.addDrawHook('ui-world', (ctx, view) => {

@@ -104,5 +104,30 @@ export const ENV_CONFIG = {
       startAmmo: 30,
       maxAmmo: 200,
     },
+    forceField: {
+      cost: { circuit: 20, steel: 20 },
+      maxHp: 600,
+      radius: 10,
+      kw: 600,
+      /** Schaden pro Sekunde an Monstern am Rand der Kuppel */
+      zapDps: 30,
+      /** Aufheizung: bis zu +heat °C Zieltemperatur im Umkreis radius × heatRange */
+      heat: 18,
+      heatRange: 1.6,
+    },
+  },
+  waves: {
+    /** Abstand zwischen zwei Angriffswellen in Sekunden */
+    intervalSeconds: 240,
+    /** Erste Welle frühestens nach so vielen Sekunden über der Spawn-Schwelle */
+    firstDelaySeconds: 180,
+    warningSeconds: 20,
+    /** Größe: base + (Σ − Schwelle) / perPollution + perWave × Wellennummer, höchstens max */
+    base: 3,
+    perPollution: 150,
+    perWave: 1,
+    max: 40,
+    /** Spawn-Entfernung zum Wrack */
+    distance: 34,
   },
 };
