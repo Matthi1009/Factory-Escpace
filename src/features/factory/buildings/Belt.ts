@@ -1,12 +1,13 @@
 // Förderband: nimmt Items von hinten und von den Seiten an, transportiert sie und gibt sie vorne ab.
 import { BaseBuilding, dirVec, opposite, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, drawItem } from '../../../core';
 import { beltSet } from '../state';
+import { BALANCE } from '../balance';
 import type { Pullable, Previewable } from '../transfer';
 
 /** Fortschritt pro Tick (0..1 pro Kachel) → 0,03 · 60 = 1,8 Kacheln/s */
-const SPEED = 0.03;
+const SPEED = BALANCE.belt.speed;
 /** Mindestabstand zwischen zwei Items auf einem Band */
-const GAP = 0.25;
+const GAP = BALANCE.belt.gap;
 /** Seiteneinstieg: Item startet seitlich versetzt und gleitet zur Mitte */
 const SIDE_START_PROGRESS = 0.2;
 const LATERAL_SPEED = 0.05;
