@@ -77,8 +77,8 @@ export class DebugPanel {
     if (this.visible) {
       this.el.style.display = 'none';
     } else {
-      this.build();
       this.el.style.display = '';
+      this.build();
     }
   }
 
