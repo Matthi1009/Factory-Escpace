@@ -68,28 +68,34 @@ const ENV_ROWS: EnvRow[] = [
 export function createOverview(game: Game): Panel {
   const panel: Panel = new Panel(game.uiRoot, { title: 'Umwelt & SDG', keyHint: 'Tab', width: 460, onShow: render });
 
+  /** Geöffnete Abschnitte (bleiben beim Neuzeichnen erhalten). Standard: nur SDG offen. */
+  const open = new Set<string>(['sdg']);
+
+  /** Einklappbarer Abschnitt: Kopfzeile zum Anklicken, Inhalt wird nur gebaut, wenn er offen ist. */
+  function fold(key: string, title: string, hint: string, build: (box: HTMLElement) => void, cls = ''): HTMLElement {
+    const wrap = el('div');
+    const isOpen = open.has(key);
+    const head = el('div', `fe-ui-fold ${cls}`);
+    head.append(el('span', 'arrow', isOpen ? '▾' : '▸'), el('span', 'ttl', title), el('span', 'hint', hint));
+    head.addEventListener('click', () => {
+      if (open.has(key)) open.delete(key);
+      else open.add(key);
+      render();
+    });
+    wrap.appendChild(head);
+    if (isOpen) {
+      const box = el('div', 'fe-ui-foldbody');
+      build(box);
+      wrap.appendChild(box);
+    }
+    return wrap;
+  }
+
   function render(): void {
     const body = panel.body;
     body.replaceChildren();
 
-    body.appendChild(el('div', 'fe-ui-sect', 'Umwelt'));
-    for (const r of ENV_ROWS) {
-      const f = r.field;
-      const stat = el('div', 'fe-ui-stat');
-      const bad = r.badness(game);
-      stat.classList.toggle('bad', bad > 0.4);
-      stat.classList.toggle('worse', bad > 0.75);
-      const top = el('div', 'top');
-      top.append(el('span', 'nm', r.label), el('span', 'v', `Ø ${r.show(game.env.average(f))} · max ${r.show(game.env.max(f))}`));
-      const bar = el('div', 'bar2');
-      const fill = el('i');
-      fill.style.width = `${Math.round(Math.max(0.02, bad) * 100)}%`;
-      bar.appendChild(fill);
-      stat.append(top, bar, el('div', 'cap', r.caption(game)));
-      body.appendChild(stat);
-    }
-
-    // SDG und übrige Kennzahlen (generisch aus game.stats)
+    // Kennzahlen generisch nach Gruppe sortieren (SDG kommt von progression, der Rest von beliebigen Modulen)
     const stats = game.stats.all();
     const groups = new Map<string, typeof stats>();
     for (const s of stats) {
@@ -98,23 +104,54 @@ export function createOverview(game: Game): Panel {
       groups.get(g)!.push(s);
     }
     const sdg = groups.get('sdg') ?? [];
-    body.appendChild(el('div', 'fe-ui-sect sdg', 'SDG – UN-Nachhaltigkeitsziele'));
-    if (sdg.length === 0) {
-      body.appendChild(el('div', 'fe-ui-empty', 'Noch keine SDG-Wertung vorhanden.'));
-    } else {
-      const pct = sdg.filter((s) => s.unit === '%' && s.value !== undefined).map((s) => s.value!);
-      if (pct.length) {
-        const avg = pct.reduce((a, b) => a + b, 0) / pct.length;
-        const line =
-          avg >= 70 ? 'Glückwunsch! Die UN ist entsetzt, Ihre Bank ist begeistert.' : avg >= 30 ? 'Da geht noch was – für die Bilanz.' : 'Verdächtig nachhaltig. Das schadet dem Umsatz.';
-        body.appendChild(el('div', 'fe-ui-satire', line));
-      }
-      for (const s of sdg) body.appendChild(statRow(s));
-    }
+
+    // 1. SDG (standardmäßig offen)
+    const pct = sdg.filter((s) => s.unit === '%' && s.value !== undefined).map((s) => s.value!);
+    const sdgHint = pct.length ? `Ø ${fmt(Math.round(pct.reduce((a, b) => a + b, 0) / pct.length))} % verfehlt` : '';
+    body.appendChild(
+      fold('sdg', 'SDG – UN-Nachhaltigkeitsziele', sdgHint, (box) => {
+        if (sdg.length === 0) {
+          box.appendChild(el('div', 'fe-ui-empty', 'Noch keine SDG-Wertung vorhanden.'));
+          return;
+        }
+        if (pct.length) {
+          const avg = pct.reduce((a, b) => a + b, 0) / pct.length;
+          const line =
+            avg >= 70 ? 'Glückwunsch! Die UN ist entsetzt, Ihre Bank ist begeistert.' : avg >= 30 ? 'Da geht noch was – für die Bilanz.' : 'Verdächtig nachhaltig. Das schadet dem Umsatz.';
+          box.appendChild(el('div', 'fe-ui-satire', line));
+        }
+        for (const s of sdg) box.appendChild(statRow(s));
+      }, 'sdg'),
+    );
+
+    // 2. Umwelt (zu)
+    body.appendChild(
+      fold('env', 'Umwelt', `Verschmutzung ${fmt(Math.round(game.env.total('pollution')))}`, (box) => {
+        for (const r of ENV_ROWS) {
+          const f = r.field;
+          const stat = el('div', 'fe-ui-stat');
+          const bad = r.badness(game);
+          stat.classList.toggle('bad', bad > 0.4);
+          stat.classList.toggle('worse', bad > 0.75);
+          const top = el('div', 'top');
+          top.append(el('span', 'nm', r.label), el('span', 'v', `Ø ${r.show(game.env.average(f))} · max ${r.show(game.env.max(f))}`));
+          const bar = el('div', 'bar2');
+          const fill = el('i');
+          fill.style.width = `${Math.round(Math.max(0.02, bad) * 100)}%`;
+          bar.appendChild(fill);
+          stat.append(top, bar, el('div', 'cap', r.caption(game)));
+          box.appendChild(stat);
+        }
+      }),
+    );
+
+    // 3. Alle übrigen Gruppen (zu)
     for (const [name, list] of groups) {
       if (name === 'sdg') continue;
-      body.appendChild(el('div', 'fe-ui-sect', name === 'sonstige' ? 'Weitere Kennzahlen' : cap(name)));
-      for (const s of list) body.appendChild(statRow(s));
+      const title = name === 'sonstige' ? 'Weitere Kennzahlen' : cap(name);
+      body.appendChild(fold(`group:${name}`, title, `${list.length}`, (box) => {
+        for (const s of list) box.appendChild(statRow(s));
+      }));
     }
   }
 
