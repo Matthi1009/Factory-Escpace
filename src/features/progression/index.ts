@@ -4,6 +4,7 @@ import type { Game } from '../../core';
 import { Demonstrations } from './demonstrations';
 import { registerDevActions } from './devActions';
 import { setupEconomy } from './economy';
+import { StockMarket } from './market';
 import { setupResearch } from './research';
 import { SdgTracker } from './sdg';
 
@@ -12,5 +13,6 @@ export function register(game: Game): void {
   const sdg = new SdgTracker(game);
   setupEconomy(game, sdg);
   const demos = new Demonstrations(game, sdg);
+  game.events.on('ready', () => new StockMarket(game)); // erst wenn alle Items registriert sind
   if (import.meta.env.DEV) registerDevActions(game, { demos });
 }
