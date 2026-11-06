@@ -2,7 +2,7 @@
 // Kohle kommt per Band/Greifarm oder per Linksklick aus dem Inventar. Baut das Erz unter sich ab und gibt es nach vorne aus.
 import type { Refuelable } from '../transfer';
 import { BALANCE } from '../balance';
-import { aiFactor } from '../state';
+import { aiFactor, reportNoFuel } from '../state';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, TICKS_PER_SECOND } from '../../../core';
 
 /** Ticks pro Erz (120 → 0,5 Erz/s) */
@@ -23,6 +23,7 @@ export class Miner extends BaseBuilding implements Refuelable {
   private coal = 0;
   /** Erze, die die gerade verbrannte Kohle noch hergibt */
   private burn = 0;
+  private warnedFuel = false;
   private ore: ItemId | null;
 
   constructor(init: BuildingInit) {
@@ -59,7 +60,15 @@ export class Miner extends BaseBuilding implements Refuelable {
     if (this.buffer > 0 && this.pushForward(this.ore)) this.buffer--;
     if (this.buffer >= MAX_BUFFER) return;
     if (this.burn <= 0) {
-      if (this.coal <= 0) return; // kein Brennstoff
+      if (this.coal <= 0) {
+        // kein Brennstoff: einmal melden, bis wieder Kohle da war
+        if (!this.warnedFuel) {
+          this.warnedFuel = true;
+          reportNoFuel(this.game, this.x, this.y, this.def.name);
+        }
+        return;
+      }
+      this.warnedFuel = false;
       this.coal--;
       this.burn = ORE_PER_COAL;
     }
