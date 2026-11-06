@@ -3,7 +3,7 @@
 | Modul | Branch | Account/Person | Task-Datei |
 |---|---|---|---|
 | core (Grundgerüst, Core-PRs) | `main`, `core/<thema>` | Matthi1009 (hat das Grundgerüst gebaut) | docs/BUILD_STATUS.md |
-| factory | `feature/factory` | offen | [tasks/factory.md](tasks/factory.md) |
+| factory | `feature/factory` | Julix2009 | [tasks/factory.md](tasks/factory.md) |
 | environment | `feature/environment` | offen | [tasks/environment.md](tasks/environment.md) |
 | progression | `feature/progression` | offen | [tasks/progression.md](tasks/progression.md) |
 | ui | `feature/ui` | offen | [tasks/ui.md](tasks/ui.md) |
