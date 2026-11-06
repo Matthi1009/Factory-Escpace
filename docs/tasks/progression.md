@@ -34,13 +34,15 @@ Die Regeln, die das Spiel vorantreiben: was man erforschen kann, wofür es Geld 
 ## Meilensteine
 
 ### M1 – Forschung kostet Items, Geld steigt mit Verschmutzung (1–2 Sessions)
-- [ ] Ordnerstruktur (`research.ts`, `economy.ts`, `index.ts`)
-- [ ] Kosten + Abhängigkeiten für alle zentralen Forschungs-IDs per `registries.research.update`
-- [ ] `setRequestHandler`: Voraussetzungen prüfen, Items abziehen, Forschung läuft (`current`, `progress`) und wird freigeschaltet (`unlock`), `notify` bei Abschluss
-- [ ] Geld-Einnahmen pro Sekunde abhängig von `env.total('pollution')` (Satire), `moneyChanged` kommt vom Core
-- [ ] Erste SDG-Kennzahl in `stats`
-- [ ] Für Tests ohne ui: je Forschung eine Aktion `progression:research_<id>` ODER Test über Konsole dokumentieren
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`research.ts`, `economy.ts`, `index.ts`)
+- [x] Kosten + Abhängigkeiten für alle zentralen Forschungs-IDs per `registries.research.update`
+- [x] `setRequestHandler`: Voraussetzungen prüfen, Items abziehen, Forschung läuft (`current`, `progress`) und wird freigeschaltet (`unlock`), `notify` bei Abschluss
+- [x] Geld-Einnahmen pro Sekunde abhängig von `env.total('pollution')` (Satire), `moneyChanged` kommt vom Core
+- [x] Erste SDG-Kennzahl in `stats`
+- [x] Für Tests ohne ui: je Forschung eine Aktion `progression:research_<id>` ODER Test über Konsole dokumentieren → erledigt: nur im Dev-Modus, Kategorie `debug`, plus `progression:debug_status`
+- [x] `npm run build` grün, Commit, Bericht
+
+Notizen M1: Baum in `research.ts` (`RESEARCH_TREE`), Balancing-Konstanten in `economy.ts` (`BASE_INCOME`, `POLLUTION_INCOME`, `SDG_SCALE`). Kennzahlen: `progression:sdg_total` (%), `progression:income` (€/s). Es läuft immer nur eine Forschung gleichzeitig.
 
 ### M2 – Events & Börse
 - [ ] Demonstrationen: zufällig ein Gebäude mit Tag `pollutes` blockieren (`blockBuilding`), Demonstranten zeichnen (Ebene `entities`), `notify`
