@@ -1,5 +1,6 @@
 // Müll-Gebäude: Müllkippe (gratis, verschmutzt) und Entsorgungsanlage (kostet Geld, sauber).
 import { BALANCE } from '../balance';
+import { needsConcreteResearch } from '../research';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type ItemId } from '../../../core';
 
 const WASTE_ITEMS = new Set<ItemId>(['waste', 'nuclear_waste']);
@@ -114,5 +115,6 @@ export const DISPOSAL_DEF: BuildingDef = {
   color: '#3d6b4f',
   tags: ['waste_disposal'],
   rotatable: false,
+  canPlace: needsConcreteResearch,
   create: (init) => new Disposal(init),
 };

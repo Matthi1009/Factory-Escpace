@@ -3,6 +3,7 @@
 // Ein voller Müllspeicher schaltet den Reaktor ab.
 import { BaseBuilding, TICKS_PER_SECOND, type BuildingDef, type BuildingInit, type Direction, type ItemId } from '../../../core';
 import { BALANCE } from '../balance';
+import { needsConcreteResearch } from '../research';
 import { flushWasteBox } from '../waste';
 import type { Refuelable } from '../transfer';
 
@@ -112,5 +113,6 @@ export const NUCLEAR_PLANT_DEF: BuildingDef = {
   color: '#5c6068',
   tags: ['power_producer', 'reactor'],
   rotatable: true,
+  canPlace: needsConcreteResearch,
   create: (init) => new NuclearPlant(init),
 };

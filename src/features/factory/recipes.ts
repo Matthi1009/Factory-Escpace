@@ -41,6 +41,7 @@ export const RECIPES: RecipeDef[] = [
     outputs: { concrete: 1 },
     time: 2.4,
     madeIn: ['hand', FURNACE_ID],
+    requiresResearch: 'concrete',
     category: 'smelting',
   },
   {

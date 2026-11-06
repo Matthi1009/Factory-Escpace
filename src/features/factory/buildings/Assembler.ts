@@ -13,7 +13,9 @@ export class Assembler extends RecipeMachine {
 
   /** Rezepte, die diese Maschine herstellen kann und die schon erforscht sind. */
   availableRecipes(): RecipeDef[] {
-    return this.game.registries.recipes.all().filter((r) => r.madeIn.includes(ASSEMBLER_ID) && this.game.research.isUnlocked(r.requiresResearch));
+    return this.game.registries.recipes
+      .all()
+      .filter((r) => r.madeIn.includes(ASSEMBLER_ID) && this.game.research.isUnlocked(r.requiresResearch) && (!r.inputs.concrete || this.game.research.isUnlocked('concrete')));
   }
 
   get currentRecipe(): RecipeDef | null {
