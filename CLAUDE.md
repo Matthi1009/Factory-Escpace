@@ -96,5 +96,6 @@ Codes = `KeyboardEvent.code`. Neue Tasten **hier eintragen** (im eigenen PR) und
 | F1 | Debugpanel | core |
 | 1–9 | Bauleiste | ui |
 | E | Inventar | ui |
+| C | Crafting-Menü | ui |
 | T | Forschung | ui |
 | Tab | (frei für ui, z. B. Übersicht) | ui |

@@ -11,6 +11,8 @@ export interface PanelOptions {
   /** Tastenkürzel nur als Hinweis in der Titelleiste, z. B. 'E' */
   keyHint?: string;
   width?: number;
+  /** Feste Startposition in px (sonst zentriert), z. B. { left: 12, top: 70 } */
+  anchor?: { left?: number; top?: number; right?: number; bottom?: number };
   /** Wird bei jedem Öffnen aufgerufen (Inhalt neu aufbauen) */
   onShow?: () => void;
   onHide?: () => void;
@@ -25,6 +27,15 @@ export class Panel {
   constructor(root: HTMLElement, private opts: PanelOptions) {
     this.el = el('div', 'fe-ui-panel');
     if (opts.width) this.el.style.width = `${opts.width}px`;
+    if (opts.anchor) {
+      const a = opts.anchor;
+      this.el.style.transform = 'none';
+      this.el.style.left = a.left !== undefined ? `${a.left}px` : 'auto';
+      this.el.style.top = a.top !== undefined ? `${a.top}px` : 'auto';
+      if (a.right !== undefined) this.el.style.right = `${a.right}px`;
+      if (a.bottom !== undefined) this.el.style.bottom = `${a.bottom}px`;
+      this.moved = true;
+    }
     const bar = el('div', 'bar');
     bar.appendChild(el('span', 'ttl', opts.title));
     if (opts.keyHint) bar.appendChild(el('span', 'keyhint', opts.keyHint));
