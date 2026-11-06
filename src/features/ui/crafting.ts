@@ -1,7 +1,7 @@
 // Crafting-Menü (C): Handcrafting-Rezepte (madeIn enthält 'hand'), Warteschlange mit Fortschritt.
 // Zweiter Reiter „Alle Rezepte“ zeigt zur Information auch Maschinen-Rezepte.
 import type { Game, RecipeDef } from '../../core';
-import { el, itemIcon, itemName, rafThrottle } from './dom';
+import { cap, el, itemIcon, itemName, rafThrottle } from './dom';
 import type { ToastFn } from './toasts';
 import { Panel } from './windows';
 
@@ -41,7 +41,7 @@ export function createCrafting(game: Game, toast: ToastFn): Panel {
     }
     if (recipes.length === 0) list.appendChild(el('div', 'fe-ui-empty', 'Keine Rezepte registriert.'));
     for (const [cat, rs] of groups) {
-      list.appendChild(el('div', 'fe-ui-sect', cat));
+      list.appendChild(el('div', 'fe-ui-sect', cap(cat)));
       for (const r of rs) list.appendChild(buildRow(r));
     }
     update();

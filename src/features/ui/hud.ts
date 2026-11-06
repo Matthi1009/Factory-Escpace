@@ -21,14 +21,17 @@ function flash(node: HTMLElement, up: boolean): void {
   node.classList.add(up ? 'flash-up' : 'flash-down');
 }
 
-export function createHud(game: Game): void {
+export function createHud(game: Game, onMenu: () => void = () => {}): void {
   const bar = el('div', 'fe-ui-hud');
   const money = chip('money', 'Geld');
   const pollution = chip('pollution', 'Verschmutzung');
   const power = chip('power', 'Strom');
   const pause = el('div', 'fe-ui-chip pause', 'PAUSE');
   pause.style.display = 'none';
-  bar.append(money.root, pollution.root, power.root, pause);
+  const menuBtn = el('button', 'menubtn', '☰');
+  menuBtn.title = 'Menü (M)';
+  menuBtn.addEventListener('click', () => onMenu());
+  bar.append(money.root, pollution.root, power.root, pause, menuBtn);
   game.uiRoot.appendChild(bar);
 
   const setMoney = (m: number) => {
