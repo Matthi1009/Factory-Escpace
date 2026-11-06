@@ -1,8 +1,22 @@
-// Feature-Modul 'progression'. Einstiegspunkt – wird von src/main.ts aufgerufen.
+// Feature-Modul 'progression': Forschung, Geld, Events, Ziele.
 // Regeln: nur in src/features/progression/ arbeiten, nur aus '../../core' importieren, IDs mit Präfix 'progression:'.
 import type { Game } from '../../core';
+import { Demonstrations } from './demonstrations';
+import { registerDevActions } from './devActions';
+import { setupEconomy } from './economy';
+import { StockMarket } from './market';
+import { Meltdown } from './meltdown';
+import { setupResearch } from './research';
+import { RocketGoal } from './rocket';
+import { SdgTracker } from './sdg';
 
 export function register(game: Game): void {
-  // TODO(progression): Inhalte registrieren und Systeme anmelden – siehe docs/tasks/progression.md
-  void game;
+  setupResearch(game);
+  const sdg = new SdgTracker(game);
+  setupEconomy(game, sdg);
+  const demos = new Demonstrations(game, sdg);
+  game.events.on('ready', () => new StockMarket(game)); // erst wenn alle Items registriert sind
+  new RocketGoal(game, sdg);
+  const meltdown = new Meltdown(game);
+  if (import.meta.env.DEV) registerDevActions(game, { demos, meltdown });
 }

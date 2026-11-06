@@ -34,25 +34,29 @@ Die Regeln, die das Spiel vorantreiben: was man erforschen kann, wofür es Geld 
 ## Meilensteine
 
 ### M1 – Forschung kostet Items, Geld steigt mit Verschmutzung (1–2 Sessions)
-- [ ] Ordnerstruktur (`research.ts`, `economy.ts`, `index.ts`)
-- [ ] Kosten + Abhängigkeiten für alle zentralen Forschungs-IDs per `registries.research.update`
-- [ ] `setRequestHandler`: Voraussetzungen prüfen, Items abziehen, Forschung läuft (`current`, `progress`) und wird freigeschaltet (`unlock`), `notify` bei Abschluss
-- [ ] Geld-Einnahmen pro Sekunde abhängig von `env.total('pollution')` (Satire), `moneyChanged` kommt vom Core
-- [ ] Erste SDG-Kennzahl in `stats`
-- [ ] Für Tests ohne ui: je Forschung eine Aktion `progression:research_<id>` ODER Test über Konsole dokumentieren
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`research.ts`, `economy.ts`, `index.ts`)
+- [x] Kosten + Abhängigkeiten für alle zentralen Forschungs-IDs per `registries.research.update`
+- [x] `setRequestHandler`: Voraussetzungen prüfen, Items abziehen, Forschung läuft (`current`, `progress`) und wird freigeschaltet (`unlock`), `notify` bei Abschluss
+- [x] Geld-Einnahmen pro Sekunde abhängig von `env.total('pollution')` (Satire), `moneyChanged` kommt vom Core
+- [x] Erste SDG-Kennzahl in `stats`
+- [x] Für Tests ohne ui: je Forschung eine Aktion `progression:research_<id>` ODER Test über Konsole dokumentieren → erledigt: nur im Dev-Modus, Kategorie `debug`, plus `progression:debug_status`
+- [x] `npm run build` grün, Commit, Bericht
+
+Notizen M1: Baum in `research.ts` (`RESEARCH_TREE`), Balancing-Konstanten in `economy.ts` (`BASE_INCOME`, `POLLUTION_INCOME`, `SDG_SCALE`). Kennzahlen: `progression:sdg_total` (%), `progression:income` (€/s). Es läuft immer nur eine Forschung gleichzeitig.
 
 ### M2 – Events & Börse
-- [ ] Demonstrationen: zufällig ein Gebäude mit Tag `pollutes` blockieren (`blockBuilding`), Demonstranten zeichnen (Ebene `entities`), `notify`
-- [ ] PR-Kampagne: Aktion und/oder Klick auf blockiertes Gebäude (`buildingClicked`) → `economy.spend` + `unblockBuilding`
-- [ ] Vollständige SDG-Wertung (mehrere Ziele, Gesamtwert), Geld-Multiplikator davon abhängig
-- [ ] Börse: schwankende Kurse (`stats`), Verkaufs-Aktionen
-- [ ] Müll-Entsorgung kostet Geld / Bonus für Abkippen (mit factory abstimmen über Items, nicht über Code)
+- [x] Demonstrationen: zufällig ein Gebäude mit Tag `pollutes` blockieren (`blockBuilding`), Demonstranten zeichnen (Ebene `entities`), `notify`
+- [x] PR-Kampagne: Aktion und/oder Klick auf blockiertes Gebäude (`buildingClicked`) → `economy.spend` + `unblockBuilding`
+- [x] Vollständige SDG-Wertung (mehrere Ziele, Gesamtwert), Geld-Multiplikator davon abhängig
+- [x] Börse: schwankende Kurse (`stats`), Verkaufs-Aktionen
+- [x] Müll-Entsorgung kostet Geld / Bonus für Abkippen (mit factory abstimmen über Items, nicht über Code) → Entsorgung kassiert factory selbst; Abkippen erhöht Verschmutzung → mehr Einnahmen und höherer Multiplikator
 
 ### M3 – Ziele & Enden
-- [ ] Raketen-Ziel: Fortschritt als `stats` (`progression:rocket_parts`), Sieg per `endGame(true, …)`
-- [ ] Kernschmelze-Finale (Auslöser z. B. Reaktor ohne Kühlwasser oder Aktion „Sicherheitssysteme abschalten“)
-- [ ] Balancing des Forschungsbaums und der Einnahmen
+- [x] Raketen-Ziel: Fortschritt als `stats` (`progression:rocket_parts`), Sieg per `endGame(true, …)`
+- [x] Kernschmelze-Finale (Auslöser z. B. Reaktor ohne Kühlwasser oder Aktion „Sicherheitssysteme abschalten“)
+- [x] Balancing des Forschungsbaums und der Einnahmen
+
+Notizen M2/M3: Alle Werte in `config.ts` (`PROGRESSION_CONFIG`). SDG-Ziele (`sdg.ts`): 3 Gesundheit (Strahlung), 6 Wasser (verlorene Bodenfeuchte), 7 Energie (Anteil Nicht-Öko-Kraftwerke), 13 Klima (Verschmutzung + Temperatur), 15 Leben an Land (Smog-Kacheln); Einnahmen × (1 + SDG %/50). Demonstrationen (`demonstrations.ts`) alle 30 s gewürfelt ab 20 % Verfehlung, max. 3, 90 s Blockade; PR-Kampagne per Doppelklick aufs Gebäude oder Aktion. Börse (`market.ts`): Kurse als `progression:price_<item>` (Gruppe „Börse“), Verkaufen per Aktion. Rakete (`rocket.ts`): 10 Raketenteile → Aktion „Rakete starten“ → 10 s Countdown → Sieg. Kernschmelze (`meltdown.ts`): Risiko steigt bei > 45 °C oder Bodenfeuchte < 0,15 am Reaktor oder mit „Sicherheitssysteme abschalten“ (+5.000 €); bei 100 % Explosion, Strahlung, verseuchtes Land, nach 8 s Spielende. Dev-Aktionen: „Demonstration starten“, „Kernschmelze auslösen“.
 
 ## Allein testen
 1. `npm run dev`, F1 → „+100 jedes Item“, dann in der Konsole `game.research.request('automation')` (oder deine Test-Aktion im Debugpanel unter „Aktionen“).
