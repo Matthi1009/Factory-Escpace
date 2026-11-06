@@ -39,4 +39,49 @@ export const ENV_CONFIG = {
     /** Sekunden ohne Spawn, nach denen ein neuer Angriff gemeldet wird */
     waveNoticeGap: 45,
   },
+  climate: {
+    /** Klima-Schritt einmal pro Sekunde, um diese Ticks versetzt zur Verschmutzung */
+    tickOffset: 5,
+    /** Erderwärmung: bis zu +globalWarming °C überall, abhängig von der Gesamtverschmutzung */
+    globalWarming: 4,
+    globalWarmingScale: 8000,
+    /** Wärmeinsel: bis zu +heatIsland °C bei lokaler Verschmutzung */
+    heatIsland: 12,
+    heatIslandScale: 6,
+    /** Smog-Winter: extremer Smog (über smogWinterStart) schluckt das Sonnenlicht */
+    smogWinterStart: 15,
+    smogWinter: 35,
+    smogWinterScale: 15,
+    /** Nuklearer Winter durch Strahlung */
+    nuclearWinter: 20,
+    nuclearWinterScale: 30,
+    /** Annäherung an die Zieltemperatur pro Sekunde (Anteil) */
+    temperatureRelax: 0.1,
+    temperatureDiffusion: 0.1,
+    /** Strahlung: Ausbreitung und (sehr langsamer) Zerfall pro Sekunde */
+    radiationDiffusion: 0.05,
+    radiationDecay: 0.0002,
+    /** Bodenfeuchte: Erholung Richtung Ausgangswert pro Sekunde (Anteil) */
+    waterRecovery: 0.003,
+    /** Austrocknung pro Sekunde und °C über waterHeatStart */
+    waterHeatStart: 30,
+    waterHeatDry: 0.0004,
+    /** Austrocknung pro Sekunde und Verschmutzungs-Einheit (max. 20) */
+    waterPollutionDry: 0.0002,
+  },
+  terrain: {
+    /** Pro Sekunde wird 1/scanParts der Karte auf Terrain-Änderungen geprüft */
+    scanParts: 8,
+    toxicRadiation: 5,
+    iceTemperature: 0,
+    wastelandPollution: 12,
+    deadPollution: 6,
+    deadWater: 0.1,
+    dryWater: 0.3,
+    dryTemperature: 35,
+    dryPollution: 2,
+    /** Ausgetrocknete Seen: Wasser-Kachel wird zu Sand, wenn so viele Land-Nachbarn trockener sind als lakeDryWater */
+    lakeDryNeighbors: 3,
+    lakeDryWater: 0.05,
+  },
 };
