@@ -47,11 +47,11 @@ Alles, was Rohstoffe bewegt und verwandelt, plus die Energie dafür.
 - [x] `npm run build` grün, Commit, Bericht
 
 ### M2 – Automatisierung & Strom
-- [ ] Greifarm (`factory:inserter`) zwischen Maschinen/Kisten
-- [ ] Montagemaschine mit wählbarem Rezept (z. B. per `buildingClicked` + einfachem Auswahl-Dialog im eigenen Ordner oder Rezept über `actions`)
-- [ ] Kohlekraftwerk (`power_producer`, `pollutes`), `factory:miner_mk2` (elektrische Abbaumaschine, `power_consumer`, schneller als Mk1), elektrische Montagemaschine (`power_consumer`)
-- [ ] Stahl, Schaltkreis, Beton – Rezepte und Ketten
-- [ ] Müll als Nebenprodukt; Müllkippe (gratis, verschmutzt) und Entsorgungsanlage (kostet Geld, `waste_disposal`)
+- [x] Greifarm (`factory:inserter`) zwischen Maschinen/Kisten
+- [x] Montagemaschine mit wählbarem Rezept (z. B. per `buildingClicked` + einfachem Auswahl-Dialog im eigenen Ordner oder Rezept über `actions`)
+- [x] Kohlekraftwerk (`power_producer`, `pollutes`), `factory:miner_mk2` (elektrische Abbaumaschine, `power_consumer`, schneller als Mk1), elektrische Montagemaschine (`power_consumer`)
+- [x] Stahl, Schaltkreis, Beton – Rezepte und Ketten
+- [x] Müll als Nebenprodukt; Müllkippe (gratis, verschmutzt) und Entsorgungsanlage (kostet Geld, `waste_disposal`)
 
 ### M3 – Endgame
 - [ ] Atomkraftwerk (`reactor`, Uran-Brennstab, Atommüll), Uranverarbeitung
