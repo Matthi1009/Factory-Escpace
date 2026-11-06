@@ -5,6 +5,7 @@ Satire: Je mehr man die Umwelt zerstört, desto mehr Geld gibt es; Verschmutzung
 TypeScript (strict) + Vite + Canvas 2D, keine Engine. Ein Core (`src/core/`) plus 4 Feature-Module, die parallel von 4 Claude-Instanzen gebaut werden.
 
 ## Befehle
+Voraussetzung: Node.js ≥ 22.12.
 ```
 npm install        # einmalig / nach Pull mit geänderter package-lock.json
 npm run dev        # Dev-Server, http://localhost:5173 (F1 = Debugpanel, window.game in der Konsole)
@@ -12,7 +13,7 @@ npm run build      # Modulgrenzen-Check + Typecheck + Produktions-Build → MUSS
 ```
 
 ## HARTE REGELN
-1. Arbeite **nur in deinem Feature-Ordner** `src/features/<modul>/` (und in deiner Task-Datei `docs/tasks/<modul>.md` zum Abhaken).
+1. Arbeite **nur in deinem Feature-Ordner** `src/features/<modul>/`. Einzige Ausnahmen: Häkchen in deiner Task-Datei `docs/tasks/<modul>.md` und neue Tasten in der Tabelle unten.
 2. **Nie ändern:** `src/core/`, `src/main.ts`, `package.json`, `package-lock.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `scripts/`, `.github/`, Dateien anderer Module.
 3. **Keine Imports aus anderen Feature-Ordnern.** Importiere nur aus dem eigenen Ordner und aus `'../../core'` (der Build prüft das).
 4. **Neue IDs immer mit Modul-Präfix:** `factory:belt`, `environment:monster`, `progression:pr_campaign`, `ui:…`. Ohne Präfix nur die zentralen IDs aus `src/core/content/`.

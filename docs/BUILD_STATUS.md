@@ -12,8 +12,13 @@ Fortschritt der Instanz, die das Grundgerüst baut. Bei Neustart: `git log` + di
 - [x] Core: Spieler-Interaktion (Kamera, Platzieren/Ziehen, Abriss, Q, R, Handabbau, Werkzeuge)
 - [x] Core: Game + Game-Loop (60 Ticks/s, Pause), F1-Debugpanel, `window.game`
 - [x] Feature-Stubs + `src/main.ts`
+- [x] Browser-Smoke-Test (Firefox headless): alle Abnahmepunkte aus dem Auftrag automatisiert geprüft
+- [x] Doku: CLAUDE.md, README.md, docs/ARCHITECTURE.md, docs/GAME_DESIGN.md, docs/tasks/*.md, docs/TEAM.md
+- [x] GitHub-Workflows (ci.yml, deploy.yml)
+- [x] Abschlussprüfung: Build grün, keine TODOs im Core, Gegenprobe Parallelität
 
 ## Als Nächstes
-- [ ] Doku: CLAUDE.md, docs/ARCHITECTURE.md, docs/GAME_DESIGN.md, docs/tasks/*.md, docs/TEAM.md
-- [ ] GitHub-Workflows (ci.yml, deploy.yml)
-- [ ] Abschlussprüfung (Gegenprobe Parallelität, keine TODOs im Core, Browser-Test)
+- [ ] Push nach GitHub (nach Freigabe)
+- [ ] GitHub Pages aktivieren: Settings → Pages → Source „GitHub Actions“
+- [ ] Label `core-request` im Repo anlegen
+- [ ] Danach nur noch Core-PRs auf Anfrage (`core/<thema>`)
