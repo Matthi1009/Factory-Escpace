@@ -96,5 +96,10 @@ Codes = `KeyboardEvent.code`. Neue Tasten **hier eintragen** (im eigenen PR) und
 | F1 | Debugpanel | core |
 | 1–9 | Bauleiste | ui |
 | E | Inventar | ui |
+| C | Crafting-Menü | ui |
+| K | Aktionen-Menü | ui |
+| N | Minimap ein-/ausblenden | ui |
+| M | Menü (pausiert) | ui |
+| H | Hilfe / Tastenübersicht | ui |
 | T | Forschung | ui |
-| Tab | (frei für ui, z. B. Übersicht) | ui |
+| Tab | Umwelt- und SDG-Übersicht | ui |

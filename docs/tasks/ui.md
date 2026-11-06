@@ -36,26 +36,26 @@ Alles, was der Spieler an Oberfläche sieht und anklickt – **generisch**, also
 ## Meilensteine
 
 ### M1 – Bauleiste, Inventar, HUD (1–2 Sessions)
-- [ ] Ordnerstruktur (`hud.ts`, `toolbar.ts`, `inventory.ts`, `styles.ts`, `index.ts`)
-- [ ] HUD oben: Geld (`moneyChanged`), Gesamt-Verschmutzung (`env.total('pollution')`, ca. 4× pro Sekunde aktualisieren), Pause-Hinweis
-- [ ] Bauleiste unten: Gebäude-Slots mit Farbe/Name, Tasten 1–9, Klick wählt aus, Auswahl hervorgehoben (`selectionChanged`), Aktualisierung bei `ready`/`researchUnlocked`/`registries.buildings.onRegister`
-- [ ] Inventaranzeige (E): alle Items mit Icon (`drawItem`) und Anzahl, live per `inventoryChanged`
-- [ ] Meldungen (`notify`) als kurz sichtbare Toasts
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`hud.ts`, `toolbar.ts`, `inventory.ts`, `styles.ts`, `index.ts`)
+- [x] HUD oben: Geld (`moneyChanged`), Gesamt-Verschmutzung (`env.total('pollution')`, ca. 4× pro Sekunde aktualisieren), Pause-Hinweis
+- [x] Bauleiste unten: Gebäude-Slots mit Farbe/Name, Tasten 1–9, Klick wählt aus, Auswahl hervorgehoben (`selectionChanged`), Aktualisierung bei `ready`/`researchUnlocked`/`registries.buildings.onRegister`
+- [x] Inventaranzeige (E): alle Items mit Icon (`drawItem`) und Anzahl, live per `inventoryChanged`
+- [x] Meldungen (`notify`) als kurz sichtbare Toasts
+- [x] `npm run build` grün, Commit, Bericht
 
 ### M2 – Crafting, Forschung, Tooltips
-- [ ] Crafting-Menü: alle Rezepte mit `madeIn` inkl. `'hand'`, ausgegraut wenn `crafting.check(id)` ≠ null, Warteschlange mit Fortschritt
-- [ ] Forschungsfenster (T): Liste/Baum aus `registries.research` mit Kosten, Voraussetzungen, Status; Knopf → `research.request(id)`; Fortschrittsbalken
-- [ ] Tooltip unter der Maus: Terrain, Ressource, Umweltwerte, Gebäude-Name, HP, `info()`
-- [ ] Strom-Anzeige (Produktion/Bedarf/Versorgung)
-- [ ] Gebäude-Info-Fenster bei `buildingClicked`
+- [x] Crafting-Menü: alle Rezepte mit `madeIn` inkl. `'hand'`, ausgegraut wenn `crafting.check(id)` ≠ null, Warteschlange mit Fortschritt
+- [x] Forschungsfenster (T): Liste/Baum aus `registries.research` mit Kosten, Voraussetzungen, Status; Knopf → `research.request(id)`; Fortschrittsbalken
+- [x] Tooltip unter der Maus: Terrain, Ressource, Umweltwerte, Gebäude-Name, HP, `info()`
+- [x] Strom-Anzeige (Produktion/Bedarf/Versorgung)
+- [x] Gebäude-Info-Fenster bei `buildingClicked`
 
 ### M3 – Umwelt, SDG, Menüs
-- [ ] Umwelt-Panel (Verschmutzung, Temperatur, Strahlung, Wasser – Durchschnitt/Max) und SDG-Panel (`stats` Gruppe `sdg`) im Satire-Stil
-- [ ] Aktionen-Menü (`registries.actions`, gruppiert nach `category`)
-- [ ] Game-Over-/Sieg-Screen (`gameOver`) mit Neustart (`location.reload()`)
-- [ ] Hauptmenü/Pausemenü, Hilfe mit Tastenübersicht
-- [ ] Optional: Minimap auf Ebene `screen`
+- [x] Umwelt-Panel (Verschmutzung, Temperatur, Strahlung, Wasser – Durchschnitt/Max) und SDG-Panel (`stats` Gruppe `sdg`) im Satire-Stil
+- [x] Aktionen-Menü (`registries.actions`, gruppiert nach `category`)
+- [x] Game-Over-/Sieg-Screen (`gameOver`) mit Neustart (`location.reload()`)
+- [x] Hauptmenü/Pausemenü, Hilfe mit Tastenübersicht
+- [x] Optional: Minimap auf Ebene `screen`
 
 ## Allein testen
 1. `npm run dev`. Ohne factory gibt es nur `core:chest` (sichtbar) – reicht für die Bauleiste. Weitere Test-Gebäude/Rezepte/Forschung/Aktionen/Stats im **eigenen Ordner** unter einer Dev-Bedingung registrieren (`if (import.meta.env.DEV) registerTestContent(game)` mit IDs `ui:test_*`) – vor dem PR wieder entfernen oder deaktiviert lassen.
