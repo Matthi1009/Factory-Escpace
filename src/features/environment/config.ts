@@ -34,6 +34,8 @@ export const ENV_CONFIG = {
     minDistBuilding: 4,
     /** Wegkosten: freie Kachel 1, Gebäude (wird angegriffen statt umgangen) */
     buildingCost: 10,
+    /** Wegkosten für Verteidigungsgebäude (Mauern): Monster laufen lieber außen herum */
+    defenseCost: 40,
     /** Flow-Field höchstens alle so viele Ticks neu berechnen */
     fieldRecalcTicks: 30,
     /** Sekunden ohne Spawn, nach denen ein neuer Angriff gemeldet wird */
@@ -83,5 +85,24 @@ export const ENV_CONFIG = {
     /** Ausgetrocknete Seen: Wasser-Kachel wird zu Sand, wenn so viele Land-Nachbarn trockener sind als lakeDryWater */
     lakeDryNeighbors: 3,
     lakeDryWater: 0.05,
+  },
+  defense: {
+    wall: { cost: { stone: 5 }, maxHp: 500 },
+    turret: {
+      cost: { iron_plate: 10, gear: 5, copper_plate: 5 },
+      maxHp: 350,
+      /** Reichweite in Kacheln */
+      range: 8,
+      damage: 12,
+      /** Ticks zwischen zwei Schüssen */
+      cooldownTicks: 30,
+      /** Strombedarf beim Schießen / im Leerlauf (kW) */
+      kw: 40,
+      idleKw: 5,
+      /** Munition: Schuss pro Item */
+      ammoPerItem: { iron_plate: 10, steel: 25 } as Record<string, number>,
+      startAmmo: 30,
+      maxAmmo: 200,
+    },
   },
 };

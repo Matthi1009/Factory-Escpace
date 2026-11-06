@@ -28,6 +28,7 @@ export interface Monster {
 }
 
 export const STAT_MONSTERS = 'environment:monsters';
+export const STAT_KILLS = 'environment:kills';
 
 export class MonsterManager {
   readonly monsters: Monster[] = [];
@@ -37,12 +38,17 @@ export class MonsterManager {
   private spawnBudget = 0;
   private lastSpawnTick = -Infinity;
   private seenTypes = new Set<string>([MUTANT_BEETLE.id]);
+  private kills = 0;
+  /** Wird aufgerufen, wenn ein Monster stirbt (z. B. für Effekte) */
+  onDeath: ((m: Monster) => void) | null = null;
 
   constructor(private game: Game) {
     this.field = new FlowField(game);
     this.rng = createRng(game.seed ^ 0x5eed);
     game.stats.define({ id: STAT_MONSTERS, label: 'Monster', group: 'environment' });
     game.stats.set(STAT_MONSTERS, 0);
+    game.stats.define({ id: STAT_KILLS, label: 'Besiegte Monster', group: 'environment' });
+    game.stats.set(STAT_KILLS, 0);
     game.onTick(() => this.tick());
     game.renderer.addDrawHook('entities', (ctx, view) => this.draw(ctx, view.minX, view.minY, view.maxX, view.maxY, view.alpha, view.time, view.zoom));
   }
@@ -69,10 +75,14 @@ export class MonsterManager {
 
   /** Schaden an einem Monster (für Geschütztürme in M2). Bei hp ≤ 0 wird es entfernt. */
   damage(m: Monster, amount: number): void {
+    if (m.hp <= 0) return;
     m.hp -= amount;
     if (m.hp <= 0) {
       const i = this.monsters.indexOf(m);
       if (i >= 0) this.monsters.splice(i, 1);
+      this.kills++;
+      this.game.stats.set(STAT_KILLS, this.kills);
+      this.onDeath?.(m);
     }
   }
 

@@ -82,6 +82,7 @@ export class FlowField {
       }
 
     const buildingCost = ENV_CONFIG.monsters.buildingCost;
+    const defenseCost = ENV_CONFIG.monsters.defenseCost;
     while (size > 0) {
       const cost = this.heapCost[0]!;
       const i = pop();
@@ -94,7 +95,8 @@ export class FlowField {
         if (!world.inBounds(nx, ny)) continue;
         if (world.getTerrain(nx, ny) === 'water') continue;
         const ni = world.index(nx, ny);
-        const step = world.getBuilding(nx, ny) ? buildingCost : 1;
+        const b = world.getBuilding(nx, ny);
+        const step = !b ? 1 : b.def.tags.includes('defense') ? defenseCost : buildingCost;
         const nc = cost + step;
         if (nc < dist[ni]!) {
           dist[ni] = nc;
