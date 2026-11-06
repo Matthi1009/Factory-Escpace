@@ -2,13 +2,14 @@
 // Kohle kommt per Band/Greifarm oder per Linksklick aus dem Inventar.
 import { BaseBuilding, TICKS_PER_SECOND, type BuildingDef, type BuildingInit, type Direction, type ItemId } from '../../../core';
 import type { Refuelable } from '../transfer';
+import { BALANCE } from '../balance';
 
 /** Leistung in kW */
-export const PLANT_KW = 900;
+export const PLANT_KW = BALANCE.coalPlant.kw;
 /** 1 Kohle läuft 20 s */
-const BURN_TICKS = 20 * TICKS_PER_SECOND;
-const MAX_COAL = 10;
-const POLLUTION_PER_SECOND = 3;
+const BURN_TICKS = BALANCE.coalPlant.burnSeconds * TICKS_PER_SECOND;
+const MAX_COAL = BALANCE.coalPlant.coalCapacity;
+const POLLUTION_PER_SECOND = BALANCE.coalPlant.pollution;
 
 export class CoalPlant extends BaseBuilding implements Refuelable {
   private coal = 0;

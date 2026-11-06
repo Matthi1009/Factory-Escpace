@@ -2,9 +2,10 @@
 // und setzt es in das Gebäude vor sich. Ohne Strom, ca. 2 Items pro Sekunde.
 import { BaseBuilding, drawItem, opposite, type BuildingDef, type BuildingInit, type ItemId } from '../../../core';
 import { asPullable, targetWouldAccept } from '../transfer';
+import { BALANCE } from '../balance';
 
 /** Ticks für einen Schwung vom Quell- zum Zielgebäude */
-const SWING_TICKS = 15;
+const SWING_TICKS = BALANCE.inserter.swingTicks;
 
 export class Inserter extends BaseBuilding {
   private held: ItemId | null = null;

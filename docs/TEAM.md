@@ -6,7 +6,7 @@
 | factory | `feature/factory` | Julix2009 | [tasks/factory.md](tasks/factory.md) |
 | environment | `feature/environment` | offen | [tasks/environment.md](tasks/environment.md) |
 | progression | `feature/progression` | Matthi1009 | [tasks/progression.md](tasks/progression.md) |
-| ui | `feature/ui` | offen | [tasks/ui.md](tasks/ui.md) |
+| ui | `feature/ui` | Julix2009 | [tasks/ui.md](tasks/ui.md) |
 
 Jeder Account arbeitet mit einer eigenen Claude-Code-Instanz an genau einem Modul. Schritt-für-Schritt-Einstieg: [ANLEITUNG.md](ANLEITUNG.md).
 
