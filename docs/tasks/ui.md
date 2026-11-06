@@ -44,11 +44,11 @@ Alles, was der Spieler an Oberfläche sieht und anklickt – **generisch**, also
 - [x] `npm run build` grün, Commit, Bericht
 
 ### M2 – Crafting, Forschung, Tooltips
-- [ ] Crafting-Menü: alle Rezepte mit `madeIn` inkl. `'hand'`, ausgegraut wenn `crafting.check(id)` ≠ null, Warteschlange mit Fortschritt
-- [ ] Forschungsfenster (T): Liste/Baum aus `registries.research` mit Kosten, Voraussetzungen, Status; Knopf → `research.request(id)`; Fortschrittsbalken
-- [ ] Tooltip unter der Maus: Terrain, Ressource, Umweltwerte, Gebäude-Name, HP, `info()`
-- [ ] Strom-Anzeige (Produktion/Bedarf/Versorgung)
-- [ ] Gebäude-Info-Fenster bei `buildingClicked`
+- [x] Crafting-Menü: alle Rezepte mit `madeIn` inkl. `'hand'`, ausgegraut wenn `crafting.check(id)` ≠ null, Warteschlange mit Fortschritt
+- [x] Forschungsfenster (T): Liste/Baum aus `registries.research` mit Kosten, Voraussetzungen, Status; Knopf → `research.request(id)`; Fortschrittsbalken
+- [x] Tooltip unter der Maus: Terrain, Ressource, Umweltwerte, Gebäude-Name, HP, `info()`
+- [x] Strom-Anzeige (Produktion/Bedarf/Versorgung)
+- [x] Gebäude-Info-Fenster bei `buildingClicked`
 
 ### M3 – Umwelt, SDG, Menüs
 - [ ] Umwelt-Panel (Verschmutzung, Temperatur, Strahlung, Wasser – Durchschnitt/Max) und SDG-Panel (`stats` Gruppe `sdg`) im Satire-Stil

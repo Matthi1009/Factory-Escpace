@@ -22,7 +22,7 @@ export const UI_CSS = `
 
 /* ---------- Bauleiste ---------- */
 .fe-ui-toolbar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);display:flex;gap:5px;padding:6px;
-  background:rgba(14,17,22,.9);border:1px solid #39424f;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.5);overflow-x:auto;pointer-events:auto;z-index:300}
+  background:rgba(14,17,22,.9);border:1px solid #39424f;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.5);overflow-x:auto;scrollbar-color:#4a566a #10151c;scrollbar-width:thin;pointer-events:auto;z-index:300}
 .fe-ui-slot{position:relative;flex:0 0 auto;width:64px;height:62px;padding:4px 3px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   background:#1c222c;border:2px solid #2f3846;border-radius:7px;cursor:pointer;user-select:none;transition:border-color .12s,background .12s}
 .fe-ui-slot:hover{background:#252d3a;border-color:#4e5d73}
@@ -55,7 +55,7 @@ export const UI_CSS = `
 .fe-ui-panel .bar .keyhint{font-size:11px;color:#8d99a8;border:1px solid #4a566a;border-radius:4px;padding:0 5px}
 .fe-ui-panel .bar button{background:none;border:none;color:#aab5c4;font-size:16px;cursor:pointer;padding:0 4px;line-height:1}
 .fe-ui-panel .bar button:hover{color:#fff}
-.fe-ui-panel .body{padding:10px;overflow:auto}
+.fe-ui-panel .body{padding:10px;overflow:auto;scrollbar-color:#4a566a #10151c}
 .fe-ui-empty{color:#8d99a8;font-style:italic;padding:6px 2px}
 
 /* ---------- Inventar ---------- */
@@ -66,6 +66,65 @@ export const UI_CSS = `
 .fe-ui-invitem .n{font-weight:700;font-variant-numeric:tabular-nums}
 .fe-ui-invitem.bump{animation:fe-ui-bump .35s ease-out}
 @keyframes fe-ui-bump{0%{background:#3a4c2e}100%{background:#1d2430}}
+
+/* ---------- Crafting ---------- */
+.fe-ui-tabs{display:flex;gap:4px;margin-bottom:8px}
+.fe-ui-tab{padding:3px 10px;background:#1d2430;border:1px solid #2f3846;border-radius:6px;color:#aab5c4;cursor:pointer;font:inherit}
+.fe-ui-tab.on{background:#2c3a52;border-color:#6ab0ff;color:#fff}
+.fe-ui-sect{margin:10px 0 4px;font-size:11px;color:#8d99a8;text-transform:uppercase;letter-spacing:.07em}
+.fe-ui-queue{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.fe-ui-job{position:relative;padding:4px 8px;background:#1d2430;border:1px solid #2f3846;border-radius:6px;overflow:hidden}
+.fe-ui-job .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(90,170,255,.28);width:0}
+.fe-ui-job span{position:relative}
+.fe-ui-recipe{display:flex;align-items:center;gap:10px;padding:6px 8px;margin-bottom:4px;background:#1d2430;border:1px solid #2f3846;border-radius:7px}
+.fe-ui-recipe.blocked .out{opacity:.6}
+.fe-ui-recipe .out{display:flex;align-items:center;gap:6px;min-width:130px;font-weight:600}
+.fe-ui-recipe .ins{flex:1;display:flex;flex-wrap:wrap;gap:3px 8px;font-size:12px}
+.fe-ui-recipe .in{display:inline-flex;align-items:center;gap:3px;color:#cfd7e2}
+.fe-ui-recipe .in.lack{color:#ff8a80}
+.fe-ui-recipe .meta{font-size:11px;color:#8d99a8;white-space:nowrap}
+.fe-ui-btn{background:#2d6a3a;color:#fff;border:1px solid #4a9a5a;border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit;white-space:nowrap}
+.fe-ui-btn:hover:not(:disabled){background:#38804a}
+.fe-ui-btn:disabled{background:#2a3038;border-color:#3a4350;color:#7d8896;cursor:not-allowed}
+.fe-ui-reason{font-size:11px;color:#e0a060}
+
+/* ---------- Forschung ---------- */
+.fe-ui-tree{display:flex;gap:12px;align-items:flex-start}
+.fe-ui-col{display:flex;flex-direction:column;gap:8px;min-width:200px;max-width:230px}
+.fe-ui-col.flat{display:grid;grid-template-columns:repeat(3,minmax(200px,1fr));max-width:none;width:100%}
+.fe-ui-col.flat .hd{grid-column:1/-1}
+.fe-ui-col .hd{font-size:11px;color:#8d99a8;text-transform:uppercase;letter-spacing:.07em}
+.fe-ui-rcard{position:relative;padding:8px 9px;background:#1d2430;border:1px solid #2f3846;border-radius:8px;overflow:hidden}
+.fe-ui-rcard h5{margin:0 0 2px;font-size:13px}
+.fe-ui-rcard p{margin:0 0 5px;font-size:11.5px;color:#aab5c4}
+.fe-ui-rcard .cost{display:flex;flex-wrap:wrap;gap:2px 8px;font-size:12px;margin-bottom:5px}
+.fe-ui-rcard .cost .lack{color:#ff8a80}
+.fe-ui-rcard .req{font-size:11px;color:#8d99a8;margin-bottom:5px}
+.fe-ui-rcard.done{border-color:#3d7a4a;background:#1c2a22}
+.fe-ui-rcard.current{border-color:#6ab0ff}
+.fe-ui-rcard.locked{opacity:.55}
+.fe-ui-rcard .badge{position:absolute;top:6px;right:8px;font-size:11px}
+.fe-ui-bar{height:5px;background:#10151c;border-radius:3px;overflow:hidden;margin-top:4px}
+.fe-ui-bar>i{display:block;height:100%;width:0;background:#6ab0ff}
+
+/* ---------- Strom im HUD ---------- */
+.fe-ui-chip.power .val{color:#ffd24a}
+.fe-ui-chip.power.low .val{color:#ff9a5a}
+.fe-ui-chip.power.out .val{color:#ff6a5a}
+
+/* ---------- Info unter der Maus ---------- */
+.fe-ui-tip{position:absolute;z-index:450;pointer-events:none;min-width:150px;max-width:280px;padding:7px 10px;background:rgba(10,12,16,.93);border:1px solid #4a566a;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.5);font:12px/1.4 system-ui,sans-serif;color:#e9edf3}
+.fe-ui-tip h4{margin:0 0 2px;font-size:13px}
+.fe-ui-tip .dim{color:#8d99a8}
+.fe-ui-tip .warn{color:#ffcf7a}
+.fe-ui-tip div+div{margin-top:1px}
+
+/* ---------- Gebäude-Info ---------- */
+.fe-ui-binfo .tags{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.fe-ui-binfo .tag{padding:0 6px;border:1px solid #4a566a;border-radius:10px;font-size:11px;color:#aab5c4}
+.fe-ui-binfo .hp{height:7px;background:#10151c;border-radius:4px;overflow:hidden;margin:4px 0 8px}
+.fe-ui-binfo .hp>i{display:block;height:100%;background:#6ad67a}
+.fe-ui-binfo .lines div{padding:1px 0}
 
 /* ---------- Meldungen ---------- */
 .fe-ui-toasts{position:absolute;top:54px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;z-index:350;pointer-events:none;width:min(460px,calc(100% - 24px))}

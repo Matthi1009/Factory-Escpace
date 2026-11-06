@@ -25,9 +25,10 @@ export function createHud(game: Game): void {
   const bar = el('div', 'fe-ui-hud');
   const money = chip('money', 'Geld');
   const pollution = chip('pollution', 'Verschmutzung');
+  const power = chip('power', 'Strom');
   const pause = el('div', 'fe-ui-chip pause', 'PAUSE');
   pause.style.display = 'none';
-  bar.append(money.root, pollution.root, pause);
+  bar.append(money.root, pollution.root, power.root, pause);
   game.uiRoot.appendChild(bar);
 
   const setMoney = (m: number) => {
@@ -47,8 +48,26 @@ export function createHud(game: Game): void {
     pollution.root.classList.toggle('high', total >= POLLUTION_HIGH && total < POLLUTION_EXTREME);
     pollution.root.classList.toggle('extreme', total >= POLLUTION_EXTREME);
   };
+  const updatePower = () => {
+    const p = game.power;
+    if (p.production <= 0 && p.demand <= 0) {
+      power.val.textContent = '–';
+      power.root.title = 'Kein Strom erzeugt oder gebraucht';
+      power.root.classList.remove('low', 'out');
+      return;
+    }
+    const pct = Math.round(p.satisfaction * 100);
+    power.val.textContent = `${fmt(Math.round(p.production))} / ${fmt(Math.round(p.demand))} kW`;
+    power.root.title = `Erzeugung / Bedarf – Versorgung ${pct} %`;
+    power.root.classList.toggle('low', p.demand > 0 && p.satisfaction < 0.99 && p.satisfaction >= 0.5);
+    power.root.classList.toggle('out', p.demand > 0 && p.satisfaction < 0.5);
+  };
   updatePollution();
-  window.setInterval(updatePollution, POLLUTION_INTERVAL_MS);
+  updatePower();
+  window.setInterval(() => {
+    updatePollution();
+    updatePower();
+  }, POLLUTION_INTERVAL_MS);
 
   const setPause = (p: boolean) => (pause.style.display = p ? '' : 'none');
   setPause(game.paused);
