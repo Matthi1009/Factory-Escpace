@@ -74,5 +74,7 @@ export function createHud(game: Game, onMenu: () => void = () => {}): void {
 
   const setPause = (p: boolean) => (pause.style.display = p ? '' : 'none');
   setPause(game.paused);
-  game.events.on('pauseChanged', ({ paused }) => setPause(paused));
+  game.events.on('pauseChanged', ({ paused }) => setPause(paused && !game.over));
+  // Nach dem Spielende ist das Spiel zwar pausiert, aber der Game-Over-Screen erklärt das – kein PAUSE-Hinweis
+  game.events.on('gameOver', () => setPause(false));
 }

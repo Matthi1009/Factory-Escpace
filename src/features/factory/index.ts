@@ -16,6 +16,7 @@ import { ECO_FURNACE_DEF, SOLAR_PLANT_DEF } from './buildings/EcoBuildings';
 import { ROPEWAY_STATION_DEF, drawRopeways } from './buildings/RopewayStation';
 import { NUCLEAR_PLANT_DEF } from './buildings/NuclearPlant';
 import { openRecipeDialog } from './dialogs/recipeDialog';
+import { flushFuelWarnings } from './state';
 import { isRefuelable } from './transfer';
 
 export function register(game: Game): void {
@@ -35,6 +36,11 @@ export function register(game: Game): void {
       // Brennstoff aus dem Inventar nachfüllen (Abbaumaschine Mk1, Kohlekraftwerk: Kohle; Atomkraftwerk: Brennstäbe)
       if (building.refuel() === 0) game.notify(`${building.def.name}: ${building.fuelFull() ? 'Brennstoffvorrat ist schon voll' : 'kein passender Brennstoff im Inventar'}`, 'warn');
     }
+  });
+
+  // Gesammelte „Maschine ohne Kohle“-Meldungen einmal pro Sekunde ausgeben
+  game.onTick((g) => {
+    if (g.tickCount % 60 === 0) flushFuelWarnings(g);
   });
 
   // Items auf Bändern zeichnen

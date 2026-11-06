@@ -3,6 +3,7 @@
 // Die ui kennt keine anderen Module: sie liest nur Registries, Zustände, Stats, Aktionen und Events des Core.
 import type { Game } from '../../core';
 import { createActionsMenu } from './actionsMenu';
+import { createAlerts } from './alerts';
 import { createBuildingInfo } from './buildingInfo';
 import { createCrafting } from './crafting';
 import { createGameOver } from './gameOver';
@@ -23,6 +24,7 @@ export function register(game: Game): void {
   const toast = createToasts(game);
   let openMenu = () => {};
   createHud(game, () => openMenu());
+  createAlerts(game, toast);
   createToolbar(game, toast);
   createInventory(game);
   createCrafting(game, toast);
