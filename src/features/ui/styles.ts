@@ -126,6 +126,55 @@ export const UI_CSS = `
 .fe-ui-binfo .hp>i{display:block;height:100%;background:#6ad67a}
 .fe-ui-binfo .lines div{padding:1px 0}
 
+/* ---------- Übersicht (Umwelt + SDG) ---------- */
+.fe-ui-sect.sdg{color:#ffb86a}
+.fe-ui-stat{margin-bottom:9px}
+.fe-ui-stat .top{display:flex;justify-content:space-between;gap:12px}
+.fe-ui-stat .top .nm{font-weight:600}
+.fe-ui-stat .top .v{font-variant-numeric:tabular-nums;color:#cfd7e2}
+.fe-ui-stat .bar2{height:7px;background:#10151c;border-radius:4px;overflow:hidden;margin:3px 0}
+.fe-ui-stat .bar2>i{display:block;height:100%;background:#6ab0ff}
+.fe-ui-stat.bad .bar2>i{background:#e0703a}
+.fe-ui-stat.worse .bar2>i{background:#e0403a}
+.fe-ui-stat .cap{font-size:11.5px;color:#aab5c4;font-style:italic}
+.fe-ui-satire{margin:2px 0 8px;padding:6px 9px;border-left:3px solid #ffb86a;background:rgba(255,184,106,.08);color:#ffd9a8;font-style:italic;font-size:12px}
+
+/* ---------- Aktionen ---------- */
+.fe-ui-action{display:flex;align-items:center;gap:10px;padding:7px 9px;margin-bottom:4px;background:#1d2430;border:1px solid #2f3846;border-radius:7px}
+.fe-ui-action .tx{flex:1}
+.fe-ui-action .tx b{display:block}
+.fe-ui-action .tx span{font-size:12px;color:#aab5c4}
+.fe-ui-action.off{opacity:.6}
+
+/* ---------- Menü, Hilfe ---------- */
+.fe-ui-menu{display:flex;flex-direction:column;gap:6px;min-width:230px}
+.fe-ui-menu .fe-ui-btn{padding:8px 14px;font-size:14px;text-align:center}
+.fe-ui-menu .fe-ui-btn.sec{background:#2a3444;border-color:#46566e}
+.fe-ui-menu .fe-ui-btn.sec:hover{background:#34425a}
+.fe-ui-keys{width:100%;border-collapse:collapse}
+.fe-ui-keys td{padding:3px 6px;border-bottom:1px solid #262e3a;vertical-align:top}
+.fe-ui-keys td:first-child{white-space:nowrap;width:1%}
+.fe-ui-keys kbd{display:inline-block;padding:0 6px;background:#1d2430;border:1px solid #4a566a;border-radius:4px;font:11px/1.6 ui-monospace,monospace;color:#cfe3ff}
+.fe-ui-help p{margin:0 0 8px;color:#cfd7e2}
+.fe-ui-hud .menubtn{pointer-events:auto;cursor:pointer;background:rgba(16,19,25,.88);border:1px solid #39424f;border-radius:8px;color:#cfd7e2;padding:0 10px;font-size:16px}
+.fe-ui-hud .menubtn:hover{background:#252d3a;color:#fff}
+
+/* ---------- Overlay (Start, Game Over) ---------- */
+.fe-ui-overlay{position:absolute;inset:0;z-index:950;display:flex;align-items:center;justify-content:center;background:rgba(6,8,12,.82);pointer-events:auto;animation:fe-ui-fade .4s ease-out;font:14px/1.5 system-ui,sans-serif;color:#e9edf3}
+@keyframes fe-ui-fade{from{opacity:0}to{opacity:1}}
+.fe-ui-overlay .box{max-width:min(520px,calc(100% - 32px));padding:26px 30px;text-align:center;background:rgba(18,21,28,.98);border:1px solid #4a566a;border-radius:14px;box-shadow:0 10px 50px rgba(0,0,0,.7)}
+.fe-ui-overlay h1{margin:0 0 6px;font-size:28px;letter-spacing:.02em}
+.fe-ui-overlay .sub{margin:0 0 14px;color:#aab5c4}
+.fe-ui-overlay.win h1{color:#8be28b}
+.fe-ui-overlay.lose h1{color:#ff8a80}
+.fe-ui-overlay .sum{display:flex;justify-content:center;gap:18px;margin:12px 0 18px;font-size:13px;color:#cfd7e2}
+.fe-ui-overlay .sum b{display:block;font-size:17px;color:#fff}
+.fe-ui-overlay .fe-ui-btn{padding:9px 22px;font-size:15px}
+
+/* ---------- Minimap ---------- */
+.fe-ui-minimap{position:absolute;top:8px;left:8px;z-index:300;padding:4px;background:rgba(14,17,22,.9);border:1px solid #39424f;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.5);pointer-events:auto}
+.fe-ui-minimap canvas{display:block;border-radius:4px;cursor:crosshair}
+
 /* ---------- Meldungen ---------- */
 .fe-ui-toasts{position:absolute;top:54px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;z-index:350;pointer-events:none;width:min(460px,calc(100% - 24px))}
 .fe-ui-toast{padding:7px 13px;border-radius:8px;background:rgba(16,19,25,.94);border:1px solid #4a566a;border-left-width:4px;box-shadow:0 3px 12px rgba(0,0,0,.5);animation:fe-ui-toast-in .18s ease-out;transition:opacity .4s,transform .4s}

@@ -51,11 +51,11 @@ Alles, was der Spieler an Oberfläche sieht und anklickt – **generisch**, also
 - [x] Gebäude-Info-Fenster bei `buildingClicked`
 
 ### M3 – Umwelt, SDG, Menüs
-- [ ] Umwelt-Panel (Verschmutzung, Temperatur, Strahlung, Wasser – Durchschnitt/Max) und SDG-Panel (`stats` Gruppe `sdg`) im Satire-Stil
-- [ ] Aktionen-Menü (`registries.actions`, gruppiert nach `category`)
-- [ ] Game-Over-/Sieg-Screen (`gameOver`) mit Neustart (`location.reload()`)
-- [ ] Hauptmenü/Pausemenü, Hilfe mit Tastenübersicht
-- [ ] Optional: Minimap auf Ebene `screen`
+- [x] Umwelt-Panel (Verschmutzung, Temperatur, Strahlung, Wasser – Durchschnitt/Max) und SDG-Panel (`stats` Gruppe `sdg`) im Satire-Stil
+- [x] Aktionen-Menü (`registries.actions`, gruppiert nach `category`)
+- [x] Game-Over-/Sieg-Screen (`gameOver`) mit Neustart (`location.reload()`)
+- [x] Hauptmenü/Pausemenü, Hilfe mit Tastenübersicht
+- [x] Optional: Minimap auf Ebene `screen`
 
 ## Allein testen
 1. `npm run dev`. Ohne factory gibt es nur `core:chest` (sichtbar) – reicht für die Bauleiste. Weitere Test-Gebäude/Rezepte/Forschung/Aktionen/Stats im **eigenen Ordner** unter einer Dev-Bedingung registrieren (`if (import.meta.env.DEV) registerTestContent(game)` mit IDs `ui:test_*`) – vor dem PR wieder entfernen oder deaktiviert lassen.

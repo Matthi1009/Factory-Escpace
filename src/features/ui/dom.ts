@@ -8,6 +8,11 @@ export function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text
   return e;
 }
 
+/** Erster Buchstabe groß (für Gruppen-/Kategorienamen wie 'economy') */
+export function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /** Zahl deutsch formatiert, z. B. 1.234.567 */
 export function fmt(n: number, digits = 0): string {
   return n.toLocaleString('de-DE', { minimumFractionDigits: digits, maximumFractionDigits: digits });
