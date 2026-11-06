@@ -3,7 +3,7 @@
 import { createRng, TICKS_PER_SECOND, type Building, type Game } from '../../../core';
 import { ENV_CONFIG } from '../config';
 import { FlowField } from './flowField';
-import { MUTANT_BEETLE, type MonsterType } from './types';
+import { chooseMonsterType, MUTANT_BEETLE, type MonsterType } from './types';
 
 const C = ENV_CONFIG.monsters;
 
@@ -36,6 +36,7 @@ export class MonsterManager {
   private nextId = 1;
   private spawnBudget = 0;
   private lastSpawnTick = -Infinity;
+  private seenTypes = new Set<string>([MUTANT_BEETLE.id]);
 
   constructor(private game: Game) {
     this.field = new FlowField(game);
@@ -43,7 +44,7 @@ export class MonsterManager {
     game.stats.define({ id: STAT_MONSTERS, label: 'Monster', group: 'environment' });
     game.stats.set(STAT_MONSTERS, 0);
     game.onTick(() => this.tick());
-    game.renderer.addDrawHook('entities', (ctx, view) => this.draw(ctx, view.minX, view.minY, view.maxX, view.maxY, view.alpha, view.time));
+    game.renderer.addDrawHook('entities', (ctx, view) => this.draw(ctx, view.minX, view.minY, view.maxX, view.maxY, view.alpha, view.time, view.zoom));
   }
 
   /** Erzeugt ein Monster auf Kachel (x, y). Auch für Tests/Konsole: game-Zugriff über window.game ist nicht nötig. */
@@ -97,13 +98,22 @@ export class MonsterManager {
       this.spawnBudget -= 1;
       const tile = this.findSpawnTile();
       if (!tile) break;
-      this.spawn(tile.x, tile.y);
+      const type = this.typeAt(tile.x, tile.y);
+      this.spawn(tile.x, tile.y, type);
       const now = this.game.tickCount;
-      if (now - this.lastSpawnTick > C.waveNoticeGap * TICKS_PER_SECOND) {
-        this.game.notify('Mutierte Käfer kriechen aus dem Smog auf die Basis zu!', 'warn');
+      if (!this.seenTypes.has(type.id)) {
+        this.seenTypes.add(type.id);
+        this.game.notify(`Neue Mutation: ${type.name} – ${type.description}!`, 'warn');
+      } else if (now - this.lastSpawnTick > C.waveNoticeGap * TICKS_PER_SECOND) {
+        this.game.notify('Mutierte Tiere kriechen aus dem Smog auf die Basis zu!', 'warn');
       }
       this.lastSpawnTick = now;
     }
+  }
+
+  /** Mutation passend zur Umwelt an Kachel (x, y). */
+  typeAt(x: number, y: number): MonsterType {
+    return chooseMonsterType(this.game.env.get('temperature', x, y), this.game.env.get('radiation', x, y));
   }
 
   /** Zufällige Kachel am Rand der verschmutzten Zone, weit genug von Wrack und Gebäuden, mit Weg zum Wrack. */
@@ -194,49 +204,37 @@ export class MonsterManager {
 
   // ---------- Zeichnen ----------
 
-  private draw(ctx: CanvasRenderingContext2D, minX: number, minY: number, maxX: number, maxY: number, alpha: number, time: number): void {
+  private draw(ctx: CanvasRenderingContext2D, minX: number, minY: number, maxX: number, maxY: number, alpha: number, time: number, zoom: number): void {
     for (const m of this.monsters) {
       const x = m.prevX + (m.x - m.prevX) * alpha;
       const y = m.prevY + (m.y - m.prevY) * alpha;
       if (x < minX - 1 || y < minY - 1 || x > maxX + 2 || y > maxY + 2) continue;
       const t = m.type;
       const r = t.size / 2;
+      if (zoom < 14) {
+        // weit herausgezoomt: nur ein Punkt (spart Zeichenzeit bei vielen Monstern)
+        ctx.fillStyle = t.body;
+        ctx.fillRect(x - r, y - r, r * 2, r * 2);
+        continue;
+      }
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(m.angle);
       ctx.translate(m.lunge * 0.15, 0);
-      // Beine (zappeln beim Laufen)
       const wiggle = Math.sin(time * 18 + m.id) * 0.08;
-      ctx.strokeStyle = '#1d0f26';
-      ctx.lineWidth = 0.05;
-      ctx.beginPath();
-      for (const s of [-1, 1]) {
-        for (const k of [-0.6, 0, 0.6]) {
-          ctx.moveTo(k * r, 0);
-          ctx.lineTo(k * r + (k === 0 ? wiggle : -wiggle) * s, s * r * 1.35);
-        }
+      switch (t.kind) {
+        case 'ant':
+          drawAnt(ctx, t, r, wiggle);
+          break;
+        case 'slug':
+          drawSlug(ctx, t, r, time + m.id);
+          break;
+        case 'spider':
+          drawSpider(ctx, t, r, wiggle);
+          break;
+        default:
+          drawBeetle(ctx, t, r, wiggle);
       }
-      ctx.stroke();
-      // Körper
-      ctx.fillStyle = t.body;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r, r * 0.75, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // giftige Flecken
-      ctx.fillStyle = t.spots;
-      ctx.beginPath();
-      ctx.arc(-r * 0.3, -r * 0.25, r * 0.16, 0, Math.PI * 2);
-      ctx.arc(-r * 0.1, r * 0.3, r * 0.12, 0, Math.PI * 2);
-      ctx.arc(r * 0.2, -r * 0.05, r * 0.1, 0, Math.PI * 2);
-      ctx.fill();
-      // Kopf mit leuchtenden Augen
-      ctx.fillStyle = '#2a1636';
-      ctx.beginPath();
-      ctx.arc(r * 0.95, 0, r * 0.38, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ff3b30';
-      ctx.fillRect(r * 1.05, -r * 0.2, r * 0.14, r * 0.12);
-      ctx.fillRect(r * 1.05, r * 0.08, r * 0.14, r * 0.12);
       ctx.restore();
       if (m.hp < t.maxHp) {
         const f = Math.max(0, m.hp / t.maxHp);
@@ -247,4 +245,113 @@ export class MonsterManager {
       }
     }
   }
+}
+
+function legs(ctx: CanvasRenderingContext2D, r: number, wiggle: number, positions: number[], length: number): void {
+  ctx.strokeStyle = '#1d0f26';
+  ctx.lineWidth = 0.05;
+  ctx.beginPath();
+  for (const s of [-1, 1]) {
+    for (const k of positions) {
+      ctx.moveTo(k * r, 0);
+      ctx.lineTo(k * r + (k === 0 ? wiggle : -wiggle) * s, s * r * length);
+    }
+  }
+  ctx.stroke();
+}
+
+function eyes(ctx: CanvasRenderingContext2D, x: number, r: number, color = '#ff3b30'): void {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, -r * 0.2, r * 0.14, r * 0.12);
+  ctx.fillRect(x, r * 0.08, r * 0.14, r * 0.12);
+}
+
+function drawBeetle(ctx: CanvasRenderingContext2D, t: MonsterType, r: number, wiggle: number): void {
+  legs(ctx, r, wiggle, [-0.6, 0, 0.6], 1.35);
+  ctx.fillStyle = t.body;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r, r * 0.75, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = t.spots;
+  ctx.beginPath();
+  ctx.arc(-r * 0.3, -r * 0.25, r * 0.16, 0, Math.PI * 2);
+  ctx.arc(-r * 0.1, r * 0.3, r * 0.12, 0, Math.PI * 2);
+  ctx.arc(r * 0.2, -r * 0.05, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#2a1636';
+  ctx.beginPath();
+  ctx.arc(r * 0.95, 0, r * 0.38, 0, Math.PI * 2);
+  ctx.fill();
+  eyes(ctx, r * 1.05, r);
+}
+
+function drawAnt(ctx: CanvasRenderingContext2D, t: MonsterType, r: number, wiggle: number): void {
+  legs(ctx, r, wiggle * 1.5, [-0.3, 0.1, 0.5], 1.2);
+  ctx.fillStyle = t.body;
+  ctx.beginPath();
+  ctx.ellipse(-r * 0.75, 0, r * 0.55, r * 0.42, 0, 0, Math.PI * 2);
+  ctx.ellipse(r * 0.1, 0, r * 0.32, r * 0.28, 0, 0, Math.PI * 2);
+  ctx.ellipse(r * 0.75, 0, r * 0.36, r * 0.32, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = t.spots;
+  ctx.beginPath();
+  ctx.arc(-r * 0.8, 0, r * 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = t.spots;
+  ctx.lineWidth = 0.03;
+  ctx.beginPath();
+  ctx.moveTo(r, -r * 0.1);
+  ctx.lineTo(r * 1.5, -r * 0.5);
+  ctx.moveTo(r, r * 0.1);
+  ctx.lineTo(r * 1.5, r * 0.5);
+  ctx.stroke();
+  eyes(ctx, r * 0.9, r, '#ffe14d');
+}
+
+function drawSlug(ctx: CanvasRenderingContext2D, t: MonsterType, r: number, phase: number): void {
+  // Leuchten
+  ctx.fillStyle = 'rgba(182,255,61,0.18)';
+  ctx.beginPath();
+  ctx.arc(0, 0, r * (1.5 + 0.15 * Math.sin(phase * 3)), 0, Math.PI * 2);
+  ctx.fill();
+  const stretch = 1 + 0.1 * Math.sin(phase * 4);
+  ctx.fillStyle = t.body;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r * stretch, r * 0.55, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = t.spots;
+  ctx.beginPath();
+  ctx.arc(-r * 0.4, -r * 0.1, r * 0.14, 0, Math.PI * 2);
+  ctx.arc(r * 0.05, r * 0.15, r * 0.12, 0, Math.PI * 2);
+  ctx.arc(r * 0.4, -r * 0.15, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = t.body;
+  ctx.lineWidth = 0.05;
+  ctx.beginPath();
+  ctx.moveTo(r * 0.8, -r * 0.15);
+  ctx.lineTo(r * 1.3, -r * 0.45);
+  ctx.moveTo(r * 0.8, r * 0.15);
+  ctx.lineTo(r * 1.3, r * 0.45);
+  ctx.stroke();
+  ctx.fillStyle = t.spots;
+  ctx.fillRect(r * 1.25, -r * 0.52, r * 0.14, r * 0.14);
+  ctx.fillRect(r * 1.25, r * 0.38, r * 0.14, r * 0.14);
+}
+
+function drawSpider(ctx: CanvasRenderingContext2D, t: MonsterType, r: number, wiggle: number): void {
+  legs(ctx, r, wiggle, [-0.5, -0.15, 0.2, 0.55], 1.7);
+  ctx.fillStyle = t.body;
+  ctx.beginPath();
+  ctx.ellipse(-r * 0.35, 0, r * 0.65, r * 0.55, 0, 0, Math.PI * 2);
+  ctx.ellipse(r * 0.55, 0, r * 0.38, r * 0.34, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = t.spots;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.7, 0);
+  ctx.lineTo(-r * 0.35, -r * 0.3);
+  ctx.lineTo(0, 0);
+  ctx.lineTo(-r * 0.35, r * 0.3);
+  ctx.closePath();
+  ctx.fill();
+  eyes(ctx, r * 0.75, r, '#7fd8ff');
 }

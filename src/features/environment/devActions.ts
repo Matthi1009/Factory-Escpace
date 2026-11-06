@@ -1,6 +1,7 @@
 // Test-Aktionen für das F1-Debugpanel (nur im Dev-Modus), Kategorie 'debug'.
 import type { Game } from '../../core';
 import type { MonsterManager } from './monsters/MonsterManager';
+import { MONSTER_TYPES } from './monsters/types';
 
 export function registerDevActions(game: Game, monsters: MonsterManager): void {
   game.registries.actions.register({
@@ -17,10 +18,30 @@ export function registerDevActions(game: Game, monsters: MonsterManager): void {
         const y = Math.floor(c.y + Math.sin(a) * 25);
         if (!g.world.inBounds(x, y) || g.world.getTerrain(x, y) === 'water' || g.world.getBuilding(x, y)) continue;
         if (!Number.isFinite(monsters.field.get(x, y))) continue;
-        monsters.spawn(x, y);
+        monsters.spawn(x, y, monsters.typeAt(x, y));
         n++;
       }
       g.notify(`${n} Käfer gespawnt (insgesamt ${monsters.monsters.length})`, 'info');
+    },
+  });
+  game.registries.actions.register({
+    id: 'environment:debug_spawn_all',
+    name: 'Jede Mutation einmal spawnen',
+    category: 'debug',
+    run: (g) => {
+      const c = g.wreck?.center() ?? g.world.spawn;
+      let k = 0;
+      for (const type of MONSTER_TYPES) {
+        for (let tries = 0; tries < 100; tries++) {
+          const a = ((k + Math.random() * 0.3) / MONSTER_TYPES.length) * Math.PI * 2;
+          const x = Math.floor(c.x + Math.cos(a) * 12);
+          const y = Math.floor(c.y + Math.sin(a) * 12);
+          if (!g.world.inBounds(x, y) || g.world.getTerrain(x, y) === 'water' || g.world.getBuilding(x, y)) continue;
+          monsters.spawn(x, y, type);
+          break;
+        }
+        k++;
+      }
     },
   });
   game.registries.actions.register({
