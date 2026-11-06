@@ -17,17 +17,36 @@ Die Claude-Instanzen wissen nichts voneinander. Sie halten sich alle an dieselbe
 
 ## 1. Einmalig: Installieren
 
-Du brauchst: **Git**, **Node.js ≥ 22.12**, die **GitHub CLI (`gh`)** und **Claude Code**.
+Wir arbeiten alle auf **Linux**. Du brauchst: **Git**, **Node.js ≥ 22.12**, die **GitHub CLI (`gh`)** und **Claude Code**.
+Nimm den Block für deine Distribution (welche du hast, zeigt `cat /etc/os-release`).
 
-**Windows** (PowerShell):
-```powershell
-winget install Git.Git
-winget install OpenJS.NodeJS.LTS
-winget install GitHub.cli
-irm https://claude.ai/install.ps1 | iex
+**Arch / Manjaro / EndeavourOS:**
+```bash
+sudo pacman -S --needed git nodejs npm github-cli
 ```
-**macOS:** `brew install git node gh`, dann `curl -fsSL https://claude.ai/install.sh | bash`
-**Linux:** Git, Node und gh über den Paketmanager installieren, dann `curl -fsSL https://claude.ai/install.sh | bash`
+
+**Ubuntu / Debian / Linux Mint / Pop!_OS:**
+```bash
+sudo apt update
+sudo apt install -y git curl gh
+```
+Das Node.js aus `apt` ist dort meist zu alt. Installiere Node über **nvm**:
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+nvm install 22
+```
+(Falls `apt install gh` das Paket nicht findet: Anleitung unter https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+**Fedora:**
+```bash
+sudo dnf install -y git nodejs npm gh
+```
+
+**Dann auf allen Distributionen: Claude Code** (ohne `sudo`):
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
 
 Danach das Terminal neu öffnen und prüfen:
 ```
@@ -36,6 +55,7 @@ node --version     # muss v22.12 oder höher sein
 gh --version
 claude --version
 ```
+Zeigt `node --version` etwas unter v22.12 (z. B. v18 oder v20), installiere Node über **nvm** wie im Ubuntu-Block oben.
 
 ## 2. Einmalig: Zugang zum Repo
 
@@ -138,7 +158,10 @@ Den Ordner `src/core/` darf **nur Matthi** ändern. Wenn deine Claude-Instanz et
 | Problem | Lösung |
 |---|---|
 | `Permission denied` / `403` beim Push | Einladung zum Repo angenommen? `gh auth login` nochmal ausführen. |
-| `npm run dev` startet nicht | `node --version` prüfen (≥ 22.12), dann `npm install`. |
+| `npm run dev` startet nicht | `node --version` prüfen (≥ 22.12, sonst über nvm installieren), dann `npm install`. |
+| `claude: Befehl nicht gefunden` | Terminal neu öffnen. Hilft das nicht: `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc` (bei zsh `~/.zshrc`). |
+| `nvm: Befehl nicht gefunden` | Terminal neu öffnen oder `source ~/.bashrc`. |
+| `EACCES` / Permission-Fehler bei `npm` | Nie `sudo npm …` verwenden. Im Projektordner reicht `npm install` ohne sudo; ggf. `node_modules` löschen und neu installieren. |
 | Merge-Konflikt | Claude sagen: „Löse den Merge-Konflikt.“ Bei `package-lock.json`: Version von main nehmen, dann `npm install`. Bei der Tastentabelle in `CLAUDE.md`: beide Zeilen behalten. |
 | CI im Pull Request ist rot | Claude sagen: „Die CI im PR schlägt fehl, schau dir das mit `gh pr checks` an und behebe es.“ |
 | Claude will etwas im Core ändern | Stoppen und sagen: „Nein, das ist Core. Schreib einen core-request.“ |
