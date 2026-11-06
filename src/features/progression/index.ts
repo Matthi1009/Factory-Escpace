@@ -5,6 +5,7 @@ import { Demonstrations } from './demonstrations';
 import { registerDevActions } from './devActions';
 import { setupEconomy } from './economy';
 import { StockMarket } from './market';
+import { Meltdown } from './meltdown';
 import { setupResearch } from './research';
 import { RocketGoal } from './rocket';
 import { SdgTracker } from './sdg';
@@ -16,5 +17,6 @@ export function register(game: Game): void {
   const demos = new Demonstrations(game, sdg);
   game.events.on('ready', () => new StockMarket(game)); // erst wenn alle Items registriert sind
   new RocketGoal(game, sdg);
-  if (import.meta.env.DEV) registerDevActions(game, { demos });
+  const meltdown = new Meltdown(game);
+  if (import.meta.env.DEV) registerDevActions(game, { demos, meltdown });
 }

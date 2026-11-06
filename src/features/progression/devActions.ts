@@ -2,6 +2,7 @@
 // Je Forschung ein Knopf „Forschen: …“ plus ein Status-Knopf. Kategorie 'debug' – die ui kann sie ausblenden.
 import type { Game } from '../../core';
 import type { Demonstrations } from './demonstrations';
+import type { Meltdown } from './meltdown';
 import { STAT_INCOME } from './economy';
 import { STAT_SDG_TOTAL } from './sdg';
 import { formatMoney, researchError } from './research';
@@ -9,10 +10,22 @@ import { formatMoney, researchError } from './research';
 /** Teile des Moduls, die die Test-Aktionen steuern */
 export interface DevContext {
   demos: Demonstrations;
+  meltdown: Meltdown;
 }
 
 export function registerDevActions(game: Game, dev: DevContext): void {
   game.events.on('ready', () => {
+    game.registries.actions.register({
+      id: 'progression:debug_meltdown',
+      name: 'Kernschmelze auslösen',
+      description: 'Lässt den ersten Atomreaktor sofort schmelzen (beendet das Spiel nach 8 s)',
+      category: 'debug',
+      run: (g) => {
+        const r = g.world.buildingsWithTag('reactor')[0];
+        if (!r) return g.notify('Kein Atomreaktor (Tag reactor) gebaut.', 'warn');
+        dev.meltdown.explode(r);
+      },
+    });
     game.registries.actions.register({
       id: 'progression:debug_demo',
       name: 'Demonstration starten',
