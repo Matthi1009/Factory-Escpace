@@ -8,7 +8,7 @@
 | progression | `feature/progression` | offen | [tasks/progression.md](tasks/progression.md) |
 | ui | `feature/ui` | offen | [tasks/ui.md](tasks/ui.md) |
 
-Jeder Account arbeitet mit einer eigenen Claude-Code-Instanz an genau einem Modul. Start: den Start-Prompt am Ende der jeweiligen Task-Datei einfügen.
+Jeder Account arbeitet mit einer eigenen Claude-Code-Instanz an genau einem Modul. Schritt-für-Schritt-Einstieg: [ANLEITUNG.md](ANLEITUNG.md).
 
 ## Empfohlene Merge-Reihenfolge
 

@@ -10,6 +10,7 @@ npm run dev      # http://localhost:5173 – F1 öffnet das Debugpanel
 npm run build
 ```
 
+- **[docs/ANLEITUNG.md](docs/ANLEITUNG.md): Einstieg fürs Team – hier anfangen!**
 - [CLAUDE.md](CLAUDE.md): Regeln, Befehle, Tastenbelegung
 - [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md): Spielidee und Zuständigkeiten
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): Core-API mit Beispielen
