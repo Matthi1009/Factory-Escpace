@@ -23,6 +23,11 @@ export class FlowField {
     game.events.on('ready', mark);
   }
 
+  /** Beim nächsten Update neu berechnen (z. B. wenn Seen ausgetrocknet sind) */
+  markDirty(): void {
+    this.dirty = true;
+  }
+
   /** Neu berechnen, falls sich Gebäude geändert haben (höchstens alle fieldRecalcTicks). */
   update(): void {
     if (!this.dirty || this.game.tickCount % ENV_CONFIG.monsters.fieldRecalcTicks !== 0) return;
