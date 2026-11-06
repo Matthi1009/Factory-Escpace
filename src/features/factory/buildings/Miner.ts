@@ -3,6 +3,7 @@
 import type { Refuelable } from '../transfer';
 import { BALANCE } from '../balance';
 import { aiFactor, reportNoFuel } from '../state';
+import { drawMiner } from '../art/minerArt';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, TICKS_PER_SECOND } from '../../../core';
 
 /** Ticks pro Erz (120 → 0,5 Erz/s) */
@@ -88,27 +89,11 @@ export class Miner extends BaseBuilding implements Refuelable {
     return lines;
   }
 
+  /** Optik: siehe art/minerArt.ts (nur Zeichnen, keine Logik) */
   draw(ctx: CanvasRenderingContext2D, time: number): void {
-    ctx.fillStyle = '#5a5f66';
-    ctx.fillRect(-0.45, -0.45, 0.9, 0.9);
-    ctx.strokeStyle = '#2d3035';
-    ctx.lineWidth = 0.05;
-    ctx.strokeRect(-0.45, -0.45, 0.9, 0.9);
-    // drehender Bohrkopf
-    ctx.save();
-    ctx.rotate(this.active && this.buffer < MAX_BUFFER && (this.burn > 0 || this.coal > 0) ? time * 6 : 0);
-    ctx.fillStyle = '#d6a21e';
-    ctx.fillRect(-0.25, -0.06, 0.5, 0.12);
-    ctx.fillRect(-0.06, -0.25, 0.12, 0.5);
-    ctx.restore();
-    // Ausgabepfeil
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(0, -0.46);
-    ctx.lineTo(0.14, -0.3);
-    ctx.lineTo(-0.14, -0.3);
-    ctx.closePath();
-    ctx.fill();
+    const fueled = this.burn > 0 || this.coal > 0;
+    const working = this.active && this.buffer < MAX_BUFFER && fueled;
+    drawMiner(ctx, this, time, { working, variant: 'mk1', led: this.blockedTicks > 0 ? 'stop' : working ? 'run' : 'wait' });
   }
 }
 

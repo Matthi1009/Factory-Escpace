@@ -3,6 +3,7 @@
 import { type BuildingDef, type BuildingInit, type ItemId, type RecipeDef } from '../../../core';
 import { FURNACE_ID } from '../recipes';
 import { BALANCE } from '../balance';
+import { drawFurnace } from '../art/furnaceArt';
 import { RecipeMachine } from './RecipeMachine';
 
 export class Furnace extends RecipeMachine {
@@ -27,25 +28,11 @@ export class Furnace extends RecipeMachine {
     return 'Leerlauf – wartet auf Erz, Platten oder Stein';
   }
 
+  /** Optik: siehe art/furnaceArt.ts (nur Zeichnen, keine Logik) */
   draw(ctx: CanvasRenderingContext2D, time: number): void {
-    ctx.fillStyle = '#7a3b2a';
-    ctx.fillRect(-0.45, -0.45, 0.9, 0.9);
-    ctx.strokeStyle = '#3d1c13';
-    ctx.lineWidth = 0.05;
-    ctx.strokeRect(-0.45, -0.45, 0.9, 0.9);
-    // Glut: heller, solange gearbeitet wird
-    const working = this.progress !== null;
-    const glow = working ? 0.6 + 0.3 * Math.sin(time * 8) : 0.15;
-    ctx.fillStyle = `rgba(255,${working ? 150 : 90},30,${glow})`;
-    ctx.fillRect(-0.25, -0.2, 0.5, 0.45);
-    // Ausgabepfeil
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(0, -0.46);
-    ctx.lineTo(0.14, -0.3);
-    ctx.lineTo(-0.14, -0.3);
-    ctx.closePath();
-    ctx.fill();
+    const working = this.progress !== null && this.lastPower > 0;
+    const led = this.blockedTicks > 0 ? 'stop' : working ? 'run' : 'wait';
+    drawFurnace(ctx, this, time, { heat: working ? 1 : this.progress !== null ? 0.4 : 0, led, accent: this.def.tags.includes('eco') ? 'eco' : 'orange' });
   }
 }
 

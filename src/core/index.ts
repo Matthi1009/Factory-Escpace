@@ -44,3 +44,5 @@ export { TERRAINS, TERRAIN_INDEX } from './content/terrain';
 export type { TerrainId, TerrainDef } from './content/terrain';
 export { RESOURCES } from './content/resources';
 export type { ResourceId, ResourceDef } from './content/resources';
+// Industrie-Look: Palette, Zeichen-Helfer, Sprite-Cache, Partikel (siehe docs/ART_STYLE.md)
+export * from './art';

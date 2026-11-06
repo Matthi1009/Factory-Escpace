@@ -1,6 +1,7 @@
 // Abbaumaschine Mk2: elektrisch, doppelt so schnell wie der Mk1, verschmutzt selbst nicht (das Kraftwerk schon).
 import { BALANCE } from '../balance';
 import { aiFactor } from '../state';
+import { drawMiner } from '../art/minerArt';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Game, type ItemId } from '../../../core';
 
 const MINE_TICKS = BALANCE.miner.mk2Ticks; // 1 Erz/s bei voller Versorgung
@@ -38,25 +39,11 @@ export class MinerMk2 extends BaseBuilding {
     return lines;
   }
 
+  /** Optik: siehe art/minerArt.ts (nur Zeichnen, keine Logik) */
   draw(ctx: CanvasRenderingContext2D, time: number): void {
-    ctx.fillStyle = '#3e5a7a';
-    ctx.fillRect(-0.45, -0.45, 0.9, 0.9);
-    ctx.strokeStyle = '#1f2f42';
-    ctx.lineWidth = 0.05;
-    ctx.strokeRect(-0.45, -0.45, 0.9, 0.9);
-    ctx.save();
-    ctx.rotate(this.lastPower > 0 && this.buffer < MAX_BUFFER ? time * 10 * this.lastPower : 0);
-    ctx.fillStyle = '#7fd1ff';
-    ctx.fillRect(-0.27, -0.06, 0.54, 0.12);
-    ctx.fillRect(-0.06, -0.27, 0.12, 0.54);
-    ctx.restore();
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(0, -0.46);
-    ctx.lineTo(0.14, -0.3);
-    ctx.lineTo(-0.14, -0.3);
-    ctx.closePath();
-    ctx.fill();
+    const working = this.lastPower > 0 && this.buffer < MAX_BUFFER;
+    const led = this.blockedTicks > 0 || this.lastPower <= 0 ? 'stop' : working ? 'run' : 'wait';
+    drawMiner(ctx, this, time, { working, variant: 'mk2', led, power: this.lastPower });
   }
 }
 

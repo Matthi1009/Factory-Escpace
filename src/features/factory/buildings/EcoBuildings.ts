@@ -11,18 +11,6 @@ export class EcoFurnace extends Furnace {
   constructor(init: BuildingInit) {
     super(init);
   }
-
-  override draw(ctx: CanvasRenderingContext2D, time: number): void {
-    super.draw(ctx, time);
-    // grüner Rand und Blatt als Erkennungszeichen
-    ctx.strokeStyle = '#4fc36a';
-    ctx.lineWidth = 0.07;
-    ctx.strokeRect(-0.45, -0.45, 0.9, 0.9);
-    ctx.fillStyle = '#4fc36a';
-    ctx.beginPath();
-    ctx.ellipse(0.28, 0.3, 0.12, 0.07, -0.6, 0, Math.PI * 2);
-    ctx.fill();
-  }
 }
 
 export const ECO_FURNACE_DEF: BuildingDef = {
