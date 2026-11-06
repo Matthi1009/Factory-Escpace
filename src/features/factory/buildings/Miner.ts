@@ -2,6 +2,7 @@
 // Kohle kommt per Band/Greifarm oder per Linksklick aus dem Inventar. Baut das Erz unter sich ab und gibt es nach vorne aus.
 import type { Refuelable } from '../transfer';
 import { BALANCE } from '../balance';
+import { aiFactor } from '../state';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, TICKS_PER_SECOND } from '../../../core';
 
 /** Ticks pro Erz (120 → 0,5 Erz/s) */
@@ -58,7 +59,7 @@ export class Miner extends BaseBuilding implements Refuelable {
       this.coal--;
       this.burn = ORE_PER_COAL;
     }
-    this.progress++;
+    this.progress += aiFactor(this.game);
     this.game.env.add('pollution', this.x, this.y, POLLUTION_PER_SECOND / TICKS_PER_SECOND);
     if (this.progress >= MINE_TICKS) {
       this.progress = 0;

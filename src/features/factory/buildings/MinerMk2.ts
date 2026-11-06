@@ -1,5 +1,6 @@
 // Abbaumaschine Mk2: elektrisch, doppelt so schnell wie der Mk1, verschmutzt selbst nicht (das Kraftwerk schon).
 import { BALANCE } from '../balance';
+import { aiFactor } from '../state';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Game, type ItemId } from '../../../core';
 
 const MINE_TICKS = BALANCE.miner.mk2Ticks; // 1 Erz/s bei voller Versorgung
@@ -23,7 +24,7 @@ export class MinerMk2 extends BaseBuilding {
     if (this.buffer >= MAX_BUFFER) return;
     const f = this.game.power.consume(POWER_KW);
     this.lastPower = f;
-    this.progress += f;
+    this.progress += f * aiFactor(this.game);
     if (this.progress >= MINE_TICKS) {
       this.progress = 0;
       this.buffer++;

@@ -5,7 +5,7 @@ import { BALANCE } from '../balance';
 import { RecipeMachine } from './RecipeMachine';
 
 export class Assembler extends RecipeMachine {
-  protected override powerKw = BALANCE.assembler.kw;
+  protected override powerKw: number = BALANCE.assembler.kw;
 
   constructor(init: BuildingInit) {
     super(init);

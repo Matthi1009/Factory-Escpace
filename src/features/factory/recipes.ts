@@ -64,6 +64,27 @@ export const RECIPES: RecipeDef[] = [
     requiresResearch: 'electronics',
     category: 'intermediate',
   },
+  {
+    id: 'factory:uranium_fuel',
+    name: 'Uran-Brennstab',
+    inputs: { uranium_ore: 3, steel: 1 },
+    outputs: { uranium_fuel: 1 },
+    time: 12,
+    madeIn: [ASSEMBLER_ID],
+    requiresResearch: 'nuclear',
+    category: 'nuclear',
+  },
+  {
+    // Ziel des Spiels: Raketenteile. Viel Müll als Preis (siehe docs/GAME_DESIGN.md: Satire)
+    id: 'factory:rocket_part',
+    name: 'Raketenteil',
+    inputs: { steel: 5, circuit: 5, concrete: 10, uranium_fuel: 1 },
+    outputs: { rocket_part: 1, waste: 3 },
+    time: 30,
+    madeIn: [ASSEMBLER_ID],
+    requiresResearch: 'rocket',
+    category: 'rocket',
+  },
 ];
 
 export function registerRecipes(game: Game): void {

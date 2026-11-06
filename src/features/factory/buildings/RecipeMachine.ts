@@ -3,6 +3,7 @@
 import { BaseBuilding, TICKS_PER_SECOND, type Direction, type ItemId, type RecipeDef } from '../../../core';
 import type { Pullable, Previewable } from '../transfer';
 import { BALANCE } from '../balance';
+import { aiFactor } from '../state';
 import { BYPRODUCTS, flushWasteBox } from '../waste';
 
 /** Eingangspuffer je Zutat = Rezeptmenge × dieser Faktor */
@@ -73,7 +74,7 @@ export abstract class RecipeMachine extends BaseBuilding implements Pullable, Pr
     const f = this.powerKw > 0 ? this.game.power.consume(this.powerKw) : 1;
     this.lastPower = f;
     if (f <= 0) return;
-    this.progress += (f * this.speed) / (r.time * TICKS_PER_SECOND);
+    this.progress += (f * this.speed * aiFactor(this.game)) / (r.time * TICKS_PER_SECOND);
     if (this.pollutionPerSecond > 0) this.game.env.add('pollution', this.x, this.y, (this.pollutionPerSecond * f) / TICKS_PER_SECOND);
     if (this.progress >= 1) {
       this.progress = null;

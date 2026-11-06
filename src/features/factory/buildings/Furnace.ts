@@ -6,7 +6,7 @@ import { BALANCE } from '../balance';
 import { RecipeMachine } from './RecipeMachine';
 
 export class Furnace extends RecipeMachine {
-  protected override pollutionPerSecond = BALANCE.furnace.pollution;
+  protected override pollutionPerSecond: number = BALANCE.furnace.pollution;
 
   constructor(init: BuildingInit) {
     super(init);
