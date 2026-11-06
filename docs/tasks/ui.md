@@ -36,12 +36,12 @@ Alles, was der Spieler an Oberfläche sieht und anklickt – **generisch**, also
 ## Meilensteine
 
 ### M1 – Bauleiste, Inventar, HUD (1–2 Sessions)
-- [ ] Ordnerstruktur (`hud.ts`, `toolbar.ts`, `inventory.ts`, `styles.ts`, `index.ts`)
-- [ ] HUD oben: Geld (`moneyChanged`), Gesamt-Verschmutzung (`env.total('pollution')`, ca. 4× pro Sekunde aktualisieren), Pause-Hinweis
-- [ ] Bauleiste unten: Gebäude-Slots mit Farbe/Name, Tasten 1–9, Klick wählt aus, Auswahl hervorgehoben (`selectionChanged`), Aktualisierung bei `ready`/`researchUnlocked`/`registries.buildings.onRegister`
-- [ ] Inventaranzeige (E): alle Items mit Icon (`drawItem`) und Anzahl, live per `inventoryChanged`
-- [ ] Meldungen (`notify`) als kurz sichtbare Toasts
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`hud.ts`, `toolbar.ts`, `inventory.ts`, `styles.ts`, `index.ts`)
+- [x] HUD oben: Geld (`moneyChanged`), Gesamt-Verschmutzung (`env.total('pollution')`, ca. 4× pro Sekunde aktualisieren), Pause-Hinweis
+- [x] Bauleiste unten: Gebäude-Slots mit Farbe/Name, Tasten 1–9, Klick wählt aus, Auswahl hervorgehoben (`selectionChanged`), Aktualisierung bei `ready`/`researchUnlocked`/`registries.buildings.onRegister`
+- [x] Inventaranzeige (E): alle Items mit Icon (`drawItem`) und Anzahl, live per `inventoryChanged`
+- [x] Meldungen (`notify`) als kurz sichtbare Toasts
+- [x] `npm run build` grün, Commit, Bericht
 
 ### M2 – Crafting, Forschung, Tooltips
 - [ ] Crafting-Menü: alle Rezepte mit `madeIn` inkl. `'hand'`, ausgegraut wenn `crafting.check(id)` ≠ null, Warteschlange mit Fortschritt
