@@ -125,7 +125,7 @@ export function drawBeltItems(game: Game, ctx: CanvasRenderingContext2D, view: {
       const p = it.prev + (it.p - it.prev) * view.alpha - 0.5;
       const lat = it.prevLat + (it.lat - it.prevLat) * view.alpha;
       const l = dirVec(it.latDir);
-      drawItem(ctx, it.item, belt.x + 0.5 + dx * p + l.dx * lat, belt.y + 0.5 + dy * p + l.dy * lat, 0.35);
+      drawItem(ctx, it.item, belt.x + 0.5 + dx * p + l.dx * lat, belt.y + 0.5 + dy * p + l.dy * lat, 0.28);
     }
   }
 }

@@ -37,14 +37,14 @@ Alles, was Rohstoffe bewegt und verwandelt, plus die Energie dafür.
 ## Meilensteine
 
 ### M1 – spielbare Kette (1–2 Sessions)
-- [ ] Ordnerstruktur (`buildings/`, `recipes.ts`, `index.ts`) und `register(game)`
-- [ ] Grundrezepte registriert: Eisen-/Kupferplatte (Ofen), Zahnrad, Stein→Beton-Vorstufe o. Ä.; Handcrafting-Rezepte für die M1-Gebäude-Materialien (`madeIn: ['hand', …]`)
-- [ ] `factory:belt`: nimmt Items von hinten und den Seiten an, transportiert sie sichtbar (Hook auf Ebene `items`), gibt sie vorne per `pushForward` ab
-- [ ] `factory:miner` (Brennstoff oder vorerst ohne Energie): nur auf Erz baubar (`canPlace`), gibt das Erz unter sich nach vorne aus
-- [ ] `factory:furnace`: nimmt Erz (+ ggf. Kohle) an, schmilzt nach Rezept, gibt Platten vorne aus; Tag `pollutes`, verschmutzt
-- [ ] Kette Abbaumaschine → Band → Ofen → Band → `core:chest` funktioniert, Platten landen im Inventar
-- [ ] `info()` für alle M1-Gebäude
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`buildings/`, `recipes.ts`, `index.ts`) und `register(game)`
+- [x] Grundrezepte registriert: Eisen-/Kupferplatte (Ofen), Zahnrad, Stein→Beton-Vorstufe o. Ä.; Handcrafting-Rezepte für die M1-Gebäude-Materialien (`madeIn: ['hand', …]`)
+- [x] `factory:belt`: nimmt Items von hinten und den Seiten an, transportiert sie sichtbar (Hook auf Ebene `items`), gibt sie vorne per `pushForward` ab
+- [x] `factory:miner` (Brennstoff oder vorerst ohne Energie): nur auf Erz baubar (`canPlace`), gibt das Erz unter sich nach vorne aus
+- [x] `factory:furnace`: nimmt Erz (+ ggf. Kohle) an, schmilzt nach Rezept, gibt Platten vorne aus; Tag `pollutes`, verschmutzt
+- [x] Kette Abbaumaschine → Band → Ofen → Band → `core:chest` funktioniert, Platten landen im Inventar
+- [x] `info()` für alle M1-Gebäude
+- [x] `npm run build` grün, Commit, Bericht
 
 ### M2 – Automatisierung & Strom
 - [ ] Greifarm (`factory:inserter`) zwischen Maschinen/Kisten
