@@ -54,6 +54,10 @@ export class Meltdown {
       this.safetyOff = false;
       g.notify('Sicherheitssysteme laufen wieder. Die Versicherung atmet auf.', 'success');
     } else {
+      if (!g.world.buildingsWithTag('reactor').length) {
+        g.notify('Kein Atomreaktor da – hier gibt es nichts abzuschalten.', 'warn');
+        return;
+      }
       this.safetyOff = true;
       g.economy.add(C.safetyOffBonus, 'Wartung gespart');
       g.notify(`Sicherheitssysteme abgeschaltet: +${formatMoney(C.safetyOffBonus)}. Der Reaktor wird langsam warm …`, 'warn');

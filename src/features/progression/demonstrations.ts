@@ -168,24 +168,24 @@ export class Demonstrations {
         if (!p.slogan) continue;
         // Schild an einem Stab
         const sx = x + 0.1;
-        const sy = y - 0.45 - bob;
+        const sy = y - 0.5 - bob;
         ctx.strokeStyle = '#6b4a2b';
-        ctx.lineWidth = 0.025;
+        ctx.lineWidth = 0.03;
         ctx.beginPath();
         ctx.moveTo(sx, y);
         ctx.lineTo(sx, sy);
         ctx.stroke();
         ctx.fillStyle = '#fdfdf5';
-        ctx.fillRect(sx - 0.22, sy - 0.14, 0.44, 0.16);
+        ctx.fillRect(sx - 0.4, sy - 0.24, 0.8, 0.26);
         ctx.strokeStyle = '#222';
-        ctx.lineWidth = 0.015;
-        ctx.strokeRect(sx - 0.22, sy - 0.14, 0.44, 0.16);
-        if (zoom >= 28) {
+        ctx.lineWidth = 0.02;
+        ctx.strokeRect(sx - 0.4, sy - 0.24, 0.8, 0.26);
+        if (zoom >= 40) {
           ctx.fillStyle = '#b3261e';
-          ctx.font = 'bold 0.075px sans-serif';
+          ctx.font = 'bold 0.13px sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(p.slogan, sx, sy - 0.06, 0.42);
+          ctx.fillText(p.slogan, sx, sy - 0.11, 0.76);
         }
       }
     }
