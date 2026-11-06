@@ -2,6 +2,7 @@
 import { BaseBuilding, dirVec, opposite, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, drawItem } from '../../../core';
 import { beltSet } from '../state';
 import { BALANCE } from '../balance';
+import { drawBelt } from '../art/beltArt';
 import type { Pullable, Previewable } from '../transfer';
 
 /** Fortschritt pro Tick (0..1 pro Kachel) → 0,03 · 60 = 1,8 Kacheln/s */
@@ -99,25 +100,9 @@ export class Belt extends BaseBuilding implements Pullable, Previewable {
     return [n === 0 ? 'Leer' : `Items auf dem Band: ${n}`];
   }
 
+  /** Optik: siehe art/beltArt.ts (nur Zeichnen, keine Logik) */
   draw(ctx: CanvasRenderingContext2D, time: number): void {
-    // ctx: Mitte = (0,0), vorne = oben
-    ctx.fillStyle = '#3b3f45';
-    ctx.fillRect(-0.5, -0.5, 1, 1);
-    ctx.fillStyle = '#2a2d31';
-    ctx.fillRect(-0.5, -0.5, 0.1, 1);
-    ctx.fillRect(0.4, -0.5, 0.1, 1);
-    // laufende Pfeile als Bewegungsanzeige
-    ctx.fillStyle = '#6d7480';
-    const off = (time * SPEED * 60) % 0.5;
-    for (let k = 0; k < 3; k++) {
-      const y = 0.5 - off - k * 0.5;
-      ctx.beginPath();
-      ctx.moveTo(0, y - 0.12);
-      ctx.lineTo(0.18, y + 0.06);
-      ctx.lineTo(-0.18, y + 0.06);
-      ctx.closePath();
-      ctx.fill();
-    }
+    drawBelt(ctx, this, time);
   }
 }
 
