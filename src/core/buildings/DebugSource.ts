@@ -29,6 +29,10 @@ export class DebugSource extends BaseBuilding {
     if (this.held !== null && this.pushForward(this.held)) this.held = null;
   }
 
+  info(): string[] {
+    return [`Gibt aus: ${this.game.registries.items.get(this.item)?.name ?? this.item}`];
+  }
+
   draw(ctx: CanvasRenderingContext2D, time: number): void {
     ctx.fillStyle = '#5b2a86';
     ctx.fillRect(-0.45, -0.45, 0.9, 0.9);

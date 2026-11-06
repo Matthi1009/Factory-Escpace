@@ -77,6 +77,11 @@ export interface Building {
    * true = angenommen (der Absender gibt es ab), false = abgelehnt (Absender behält es).
    */
   acceptItem?(item: ItemId, from: Direction): boolean;
+  /**
+   * Zustandszeilen für Tooltip/Inspektor der UI (Deutsch), z. B. ['Rezept: Eisenplatte', 'Fortschritt: 40 %'].
+   * So kann die UI Gebäude anderer Module anzeigen, ohne sie zu kennen.
+   */
+  info?(): string[];
   /** Nach dem Platzieren (Gebäude steht schon auf der Karte). */
   onPlace?(): void;
   /** Vor dem Entfernen/Zerstören (Gebäude steht noch auf der Karte). */

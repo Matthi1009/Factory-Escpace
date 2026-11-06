@@ -205,7 +205,8 @@ export class DebugPanel {
       tile =
         `(${hv.x}, ${hv.y}) ${g.world.getTerrain(hv.x, hv.y)} ${g.world.getResource(hv.x, hv.y) ?? ''}\n` +
         ENV_FIELDS.map((f) => `${f}=${g.env.get(f, hv.x, hv.y).toFixed(2)}`).join(' ') +
-        (b ? `\n${b.def.id} #${b.uid} dir=${'NESW'[b.dir]} hp=${Math.ceil(b.hp)}/${b.def.maxHp}` : '');
+        (b ? `\n${b.def.id} #${b.uid} dir=${'NESW'[b.dir]} hp=${Math.ceil(b.hp)}/${b.def.maxHp}` : '') +
+        (b?.info ? '\n' + b.info().join('\n') : '');
     }
     const inv = g.inventory
       .entries()
