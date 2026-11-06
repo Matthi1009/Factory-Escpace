@@ -1,5 +1,6 @@
 // Abbaumaschine Mk1: nur auf Erz baubar, läuft mit Kohle (Mk2 mit Strom folgt in M2).
 // Kohle kommt per Band/Greifarm oder per Linksklick aus dem Inventar. Baut das Erz unter sich ab und gibt es nach vorne aus.
+import type { Refuelable } from '../transfer';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, TICKS_PER_SECOND } from '../../../core';
 
 /** Ticks pro Erz (120 → 0,5 Erz/s) */
@@ -13,7 +14,7 @@ export const MAX_COAL = 5;
 /** Verschmutzung pro Sekunde, solange der Mk1 Kohle verbrennt */
 const POLLUTION_PER_SECOND = 0.3;
 
-export class Miner extends BaseBuilding {
+export class Miner extends BaseBuilding implements Refuelable {
   private progress = 0;
   private buffer = 0;
   /** Kohle im Vorrat */

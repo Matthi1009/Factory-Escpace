@@ -1,6 +1,7 @@
 // Förderband: nimmt Items von hinten und von den Seiten an, transportiert sie und gibt sie vorne ab.
 import { BaseBuilding, dirVec, opposite, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, drawItem } from '../../../core';
 import { beltSet } from '../state';
+import type { Pullable, Previewable } from '../transfer';
 
 /** Fortschritt pro Tick (0..1 pro Kachel) → 0,03 · 60 = 1,8 Kacheln/s */
 const SPEED = 0.03;
@@ -22,7 +23,7 @@ interface BeltItem {
   latDir: Direction;
 }
 
-export class Belt extends BaseBuilding {
+export class Belt extends BaseBuilding implements Pullable, Previewable {
   /** Items, das vorderste zuerst (größtes p) */
   readonly items: BeltItem[] = [];
 
@@ -41,18 +42,33 @@ export class Belt extends BaseBuilding {
     this.items.length = 0;
   }
 
-  acceptItem(item: ItemId, from: Direction): boolean {
+  /** Ist am Einstieg dieser Seite Platz? */
+  wouldAccept(_item: ItemId, from: Direction): boolean {
     if (from === this.dir) return false; // von vorne wird nichts angenommen
+    const p = from === opposite(this.dir) ? 0 : SIDE_START_PROGRESS;
+    for (const it of this.items) if (Math.abs(it.p - p) < GAP) return false;
+    return true;
+  }
+
+  acceptItem(item: ItemId, from: Direction): boolean {
+    if (!this.wouldAccept(item, from)) return false;
     const behind = from === opposite(this.dir);
     const p = behind ? 0 : SIDE_START_PROGRESS;
-    // genug Platz am Einstieg?
-    for (const it of this.items) if (Math.abs(it.p - p) < GAP) return false;
     const entry: BeltItem = { item, p, prev: p, lat: behind ? 0 : 0.5, prevLat: behind ? 0 : 0.5, latDir: from };
     // sortiert einfügen (vorderstes zuerst)
     let i = 0;
     while (i < this.items.length && this.items[i]!.p > p) i++;
     this.items.splice(i, 0, entry);
     return true;
+  }
+
+  /** Greifarm: vorderstes Item des Bands */
+  peekItem(): ItemId | null {
+    return this.items[0]?.item ?? null;
+  }
+
+  takeItem(): ItemId | null {
+    return this.items.shift()?.item ?? null;
   }
 
   tick(): void {
