@@ -1,6 +1,7 @@
 // Öko-Varianten (Tag `eco`): teuer und ineffizient, dafür (fast) sauber.
 import { BaseBuilding, type BuildingDef, type BuildingInit } from '../../../core';
 import { BALANCE } from '../balance';
+import { needsConcreteResearch } from '../research';
 import { Furnace } from './Furnace';
 
 export class EcoFurnace extends Furnace {
@@ -35,6 +36,7 @@ export const ECO_FURNACE_DEF: BuildingDef = {
   color: '#3f7a52',
   tags: ['eco'],
   rotatable: true,
+  canPlace: needsConcreteResearch,
   create: (init) => new EcoFurnace(init),
 };
 
@@ -96,5 +98,6 @@ export const SOLAR_PLANT_DEF: BuildingDef = {
   color: '#26364d',
   tags: ['power_producer', 'eco'],
   rotatable: false,
+  canPlace: needsConcreteResearch,
   create: (init) => new SolarPlant(init),
 };

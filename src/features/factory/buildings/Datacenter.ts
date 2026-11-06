@@ -2,6 +2,7 @@
 // Mit erforschter KI-Automatisierung machen laufende Rechenzentren alle Maschinen schneller.
 import { BaseBuilding, TICKS_PER_SECOND, type BuildingDef, type BuildingInit } from '../../../core';
 import { BALANCE } from '../balance';
+import { needsConcreteResearch } from '../research';
 import { aiFactor, datacenterSet } from '../state';
 
 /** Wasser wird alle UPDATE Ticks in einem Schritt entzogen (spart Rechenzeit) */
@@ -73,5 +74,6 @@ export const DATACENTER_DEF: BuildingDef = {
   color: '#23303d',
   tags: ['datacenter', 'power_consumer'],
   rotatable: false,
+  canPlace: needsConcreteResearch,
   create: (init) => new Datacenter(init),
 };
