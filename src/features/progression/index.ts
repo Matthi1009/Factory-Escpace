@@ -1,8 +1,8 @@
-// Feature-Modul 'progression'. Einstiegspunkt – wird von src/main.ts aufgerufen.
+// Feature-Modul 'progression': Forschung, Geld, Events, Ziele.
 // Regeln: nur in src/features/progression/ arbeiten, nur aus '../../core' importieren, IDs mit Präfix 'progression:'.
 import type { Game } from '../../core';
+import { setupResearch } from './research';
 
 export function register(game: Game): void {
-  // TODO(progression): Inhalte registrieren und Systeme anmelden – siehe docs/tasks/progression.md
-  void game;
+  setupResearch(game);
 }
