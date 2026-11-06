@@ -87,7 +87,7 @@ export const ENV_CONFIG = {
     lakeDryWater: 0.05,
   },
   defense: {
-    wall: { cost: { stone: 5 }, maxHp: 500 },
+    wall: { cost: { stone: 5 }, maxHp: 1200 },
     turret: {
       cost: { iron_plate: 10, gear: 5, copper_plate: 5 },
       maxHp: 350,
