@@ -139,6 +139,14 @@ export const UI_CSS = `
 .fe-ui-stat .cap{font-size:11.5px;color:#aab5c4;font-style:italic}
 .fe-ui-satire{margin:2px 0 8px;padding:6px 9px;border-left:3px solid #ffb86a;background:rgba(255,184,106,.08);color:#ffd9a8;font-style:italic;font-size:12px}
 
+.fe-ui-fold{display:flex;align-items:center;gap:7px;margin:8px 0 4px;padding:5px 8px;background:#1d2430;border:1px solid #2f3846;border-radius:6px;cursor:pointer;user-select:none}
+.fe-ui-fold:hover{background:#252d3a}
+.fe-ui-fold .arrow{width:12px;color:#8d99a8}
+.fe-ui-fold .ttl{flex:1;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#cfd7e2;font-weight:600}
+.fe-ui-fold .hint{font-size:11px;color:#8d99a8}
+.fe-ui-fold.sdg .ttl{color:#ffb86a}
+.fe-ui-foldbody{padding:4px 2px 0}
+
 /* ---------- Aktionen ---------- */
 .fe-ui-action{display:flex;align-items:center;gap:10px;padding:7px 9px;margin-bottom:4px;background:#1d2430;border:1px solid #2f3846;border-radius:7px}
 .fe-ui-action .tx{flex:1}
