@@ -34,13 +34,15 @@ Die Umwelt reagiert sichtbar auf die Fabrik, und die mutierten Monster greifen a
 ## Meilensteine
 
 ### M1 – sichtbare Verschmutzung + erster Monstertyp (1–2 Sessions)
-- [ ] Ordnerstruktur (`simulation.ts`, `overlay.ts`, `monsters/`, `index.ts`)
-- [ ] Verschmutzung breitet sich aus und klingt langsam ab (Diffusion auf `env.field('pollution')`)
-- [ ] Overlay zeichnet Verschmutzung sichtbar (Ebene `overlay`, nur sichtbarer Bereich)
-- [ ] Ab einer Verschmutzungsschwelle spawnt ein Monstertyp am Rand der verschmutzten Zone
-- [ ] Monster laufen (einfache Wegfindung, z. B. BFS/Flow-Field zum Wrack, Wasser umgehen) und greifen Gebäude an (`damageBuilding`)
-- [ ] Zerstörtes Wrack → Core feuert `gameOver` (nur prüfen, nicht selbst bauen)
-- [ ] `npm run build` grün, Commit, Bericht
+- [x] Ordnerstruktur (`simulation.ts`, `overlay.ts`, `monsters/`, `index.ts`)
+- [x] Verschmutzung breitet sich aus und klingt langsam ab (Diffusion auf `env.field('pollution')`)
+- [x] Overlay zeichnet Verschmutzung sichtbar (Ebene `overlay`, nur sichtbarer Bereich)
+- [x] Ab einer Verschmutzungsschwelle spawnt ein Monstertyp am Rand der verschmutzten Zone
+- [x] Monster laufen (einfache Wegfindung, z. B. BFS/Flow-Field zum Wrack, Wasser umgehen) und greifen Gebäude an (`damageBuilding`)
+- [x] Zerstörtes Wrack → Core feuert `gameOver` (nur prüfen, nicht selbst bauen)
+- [x] `npm run build` grün, Commit, Bericht
+
+Notizen M1: Balancing zentral in `config.ts` (`ENV_CONFIG`). Ausbreitung 6×/s, Abbau ≈ 0,3 %/s (Wald filtert stärker). Monster ab Σ Verschmutzung 300, Rate (Σ − 300)/400 pro Minute, max. 150, Spawn am Rand der Smogwolke (≥ 20 Kacheln vom Wrack). Flow-Field (Dijkstra) zum Wrack, Wasser unpassierbar, Gebäude kosten 10 → werden angegriffen statt weit umgangen. Kennzahl `environment:monsters`. Dev-Aktionen im F1-Panel: „5 Käfer spawnen“, „Alle Monster entfernen“. `MonsterManager.damage(m, n)` ist für die Geschütztürme in M2 vorbereitet.
 
 ### M2 – Umwelt-Folgen
 - [ ] Hitze/Kälte/Strahlung/Austrocknung aus Verschmutzung ableiten und ausbreiten
