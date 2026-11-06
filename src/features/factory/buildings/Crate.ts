@@ -3,7 +3,8 @@
 import { BaseBuilding, type BuildingDef, type BuildingInit, type ItemId } from '../../../core';
 import type { Pullable } from '../transfer';
 
-const CAPACITY = 200;
+/** Obergrenze pro Item-Sorte: eine Sorte kann das Lager nicht für alle anderen blockieren */
+const PER_ITEM_CAP = 100;
 
 export class Crate extends BaseBuilding implements Pullable {
   private stock = new Map<ItemId, number>();
@@ -13,20 +14,24 @@ export class Crate extends BaseBuilding implements Pullable {
     super(init);
   }
 
+  wouldAccept(item: ItemId): boolean {
+    return (this.stock.get(item) ?? 0) < PER_ITEM_CAP;
+  }
+
   acceptItem(item: ItemId): boolean {
-    if (this.total >= CAPACITY) return false;
+    if (!this.wouldAccept(item)) return false;
     this.stock.set(item, (this.stock.get(item) ?? 0) + 1);
     this.total++;
     return true;
   }
 
-  peekItem(): ItemId | null {
-    for (const [item, n] of this.stock) if (n > 0) return item;
+  peekItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    for (const [item, n] of this.stock) if (n > 0 && (!accept || accept(item))) return item;
     return null;
   }
 
-  takeItem(): ItemId | null {
-    const item = this.peekItem();
+  takeItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    const item = this.peekItem(accept);
     if (item === null) return null;
     const n = this.stock.get(item)! - 1;
     if (n <= 0) this.stock.delete(item);
@@ -43,7 +48,7 @@ export class Crate extends BaseBuilding implements Pullable {
 
   info(): string[] {
     const names = this.game.registries.items;
-    const lines = [`Inhalt: ${this.total}/${CAPACITY}`];
+    const lines = [`Inhalt: ${this.total} (max. ${PER_ITEM_CAP} je Sorte)`];
     let shown = 0;
     for (const [item, n] of this.stock) {
       if (shown++ >= 4) {
@@ -69,14 +74,14 @@ export class Crate extends BaseBuilding implements Pullable {
     ctx.stroke();
     // Füllstand
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillRect(-0.4, 0.46, 0.8 * (this.total / CAPACITY), 0.06);
+    ctx.fillRect(-0.4, 0.46, 0.8 * Math.min(1, this.total / (PER_ITEM_CAP * 2)), 0.06);
   }
 }
 
 export const CRATE_DEF: BuildingDef = {
   id: 'factory:crate',
   name: 'Lagerkiste',
-  description: 'Lagert bis zu 200 Items. Greifarme können daraus entnehmen.',
+  description: 'Lagert bis zu 100 Items je Sorte. Greifarme können daraus entnehmen.',
   size: { w: 1, h: 1 },
   cost: { iron_plate: 2 },
   maxHp: 80,

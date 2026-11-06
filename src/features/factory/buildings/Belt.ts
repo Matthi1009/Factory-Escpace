@@ -64,12 +64,13 @@ export class Belt extends BaseBuilding implements Pullable, Previewable {
   }
 
   /** Greifarm: vorderstes Item des Bands */
-  peekItem(): ItemId | null {
-    return this.items[0]?.item ?? null;
+  peekItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    const i = this.items[0]?.item;
+    return i !== undefined && (!accept || accept(i)) ? i : null;
   }
 
-  takeItem(): ItemId | null {
-    return this.items.shift()?.item ?? null;
+  takeItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    return this.peekItem(accept) === null ? null : (this.items.shift()?.item ?? null);
   }
 
   tick(): void {

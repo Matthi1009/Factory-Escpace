@@ -4,10 +4,10 @@ import type { Building, Direction, ItemId } from '../../core';
 
 /** Gebäude, aus denen ein Greifarm Items entnehmen kann. */
 export interface Pullable {
-  /** Welches Item würde als Nächstes entnommen? null = nichts. */
-  peekItem(): ItemId | null;
-  /** Entnimmt das Item (dasselbe wie peekItem). */
-  takeItem(): ItemId | null;
+  /** Welches Item würde als Nächstes entnommen? Mit `accept` nur eines, das der Greifarm brauchen kann. null = nichts. */
+  peekItem(accept?: (item: ItemId) => boolean): ItemId | null;
+  /** Entnimmt ein Item (mit `accept` dasselbe wie peekItem(accept)). */
+  takeItem(accept?: (item: ItemId) => boolean): ItemId | null;
 }
 
 /** Gebäude, die ohne Nebenwirkung sagen können, ob sie ein Item annehmen würden. */
@@ -18,6 +18,8 @@ export interface Previewable {
 /** Gebäude, die Kohle aus dem Spieler-Inventar nachfüllen lassen (Linksklick). */
 export interface Refuelable {
   refuel(): number;
+  /** Ist der Brennstoffvorrat schon voll? (für die richtige Meldung beim Klick) */
+  fuelFull(): boolean;
 }
 
 export function asPullable(b: Building | null): (Building & Pullable) | null {

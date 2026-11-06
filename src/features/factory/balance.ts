@@ -35,7 +35,9 @@ export const BALANCE = {
   },
   coalPlant: {
     kw: 900,
-    /** Sekunden, die 1 Kohle brennt */
+    /** Mindest-Auslastung im Leerlauf: das Kraftwerk liefert immer Leistung (Netz existiert), verbrennt aber nur so viel, wie gebraucht wird */
+    idleLoad: 0.1,
+    /** Sekunden, die 1 Kohle bei voller Auslastung brennt */
     burnSeconds: 20,
     coalCapacity: 10,
     pollution: 3,
@@ -49,7 +51,8 @@ export const BALANCE = {
   },
   nuclearPlant: {
     kw: 4000,
-    /** Sekunden, die 1 Brennstab brennt */
+    idleLoad: 0.1,
+    /** Sekunden, die 1 Brennstab bei voller Auslastung brennt */
     burnSeconds: 120,
     fuelCapacity: 3,
     /** Ein voller Müllspeicher lässt den Reaktor abschalten */

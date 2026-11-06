@@ -15,6 +15,7 @@ export class NuclearPlant extends BaseBuilding implements Refuelable {
   private burn = 0;
   private wasteBox: ItemId[] = [];
   private running = false;
+  private load = 0;
   private warned = '';
 
   constructor(init: BuildingInit) {
@@ -34,6 +35,10 @@ export class NuclearPlant extends BaseBuilding implements Refuelable {
     return n > 0 ? n : 0;
   }
 
+  fuelFull(): boolean {
+    return this.fuel >= B.fuelCapacity;
+  }
+
   onRemove(): void {
     const inv = this.game.inventory;
     if (this.fuel > 0) inv.add('uranium_fuel', this.fuel);
@@ -45,8 +50,9 @@ export class NuclearPlant extends BaseBuilding implements Refuelable {
   tick(): void {
     flushWasteBox(this, this.wasteBox);
     this.running = false;
-    // Läuft nur bei Strombedarf (wie das Kohlekraftwerk)
-    if (this.game.power.demand <= 0) return;
+    // Liefert immer Leistung, solange Brennstab da ist; der Abbrand richtet sich nach der Auslastung (wie das Kohlekraftwerk)
+    const p = this.game.power;
+    const load = Math.min(1, Math.max(B.idleLoad, p.production > 0 ? p.demand / p.production : 0));
     if (this.burn <= 0) {
       if (this.wasteBox.length >= B.wasteCapacity) return this.warn('waste', `Atomkraftwerk (${this.x}|${this.y}): Atommüll-Speicher voll, Reaktor abgeschaltet!`);
       if (this.fuel <= 0) return this.warn('fuel', `Atomkraftwerk (${this.x}|${this.y}) ohne Brennstäbe!`);
@@ -54,15 +60,19 @@ export class NuclearPlant extends BaseBuilding implements Refuelable {
       this.burn = BURN_TICKS;
     }
     this.warned = '';
-    this.burn--;
-    if (this.burn === 0) this.wasteBox.push('nuclear_waste');
+    this.burn -= load;
+    this.load = load;
+    if (this.burn <= 0) {
+      this.burn = 0;
+      this.wasteBox.push('nuclear_waste');
+    }
     this.running = true;
-    this.game.power.produce(B.kw);
+    p.produce(B.kw);
     this.game.env.add('radiation', this.x, this.y, B.radiation / TICKS_PER_SECOND);
   }
 
   info(): string[] {
-    const lines = [`Brennstäbe: ${this.fuel}/${B.fuelCapacity}`, this.running ? `Läuft: ${B.kw} kW` : 'Bereit (kein Strombedarf) oder gestoppt'];
+    const lines = [`Brennstäbe: ${this.fuel}/${B.fuelCapacity}`, this.running ? `Läuft: ${B.kw} kW, Auslastung ${Math.round(this.load * 100)} %` : 'Gestoppt (kein Brennstab oder Müllspeicher voll)'];
     lines.push(`Atommüll: ${this.wasteBox.length}/${B.wasteCapacity}${this.wasteBox.length >= B.wasteCapacity ? ' – abführen!' : ''}`);
     return lines;
   }
