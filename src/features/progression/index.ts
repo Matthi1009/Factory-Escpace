@@ -4,9 +4,11 @@ import type { Game } from '../../core';
 import { registerDevActions } from './devActions';
 import { setupEconomy } from './economy';
 import { setupResearch } from './research';
+import { SdgTracker } from './sdg';
 
 export function register(game: Game): void {
   setupResearch(game);
-  setupEconomy(game);
+  const sdg = new SdgTracker(game);
+  setupEconomy(game, sdg);
   if (import.meta.env.DEV) registerDevActions(game);
 }

@@ -1,7 +1,8 @@
 // Test-Aktionen für das F1-Debugpanel (nur im Dev-Modus), damit progression ohne ui-Modul testbar ist.
 // Je Forschung ein Knopf „Forschen: …“ plus ein Status-Knopf. Kategorie 'debug' – die ui kann sie ausblenden.
 import type { Game } from '../../core';
-import { STAT_INCOME, STAT_SDG_TOTAL } from './economy';
+import { STAT_INCOME } from './economy';
+import { STAT_SDG_TOTAL } from './sdg';
 import { formatMoney, researchError } from './research';
 
 export function registerDevActions(game: Game): void {

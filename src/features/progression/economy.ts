@@ -1,39 +1,36 @@
-// Geld und SDG-Satire-Wertung: Je mehr Verschmutzung, desto mehr Geld.
-// Einmal pro Sekunde: Einnahmen auszahlen, Kennzahlen in game.stats aktualisieren.
+// Geld: Je mehr Verschmutzung und je stärker die SDGs verfehlt werden, desto mehr Geld (Satire).
+// Einmal pro Sekunde: SDG-Wertung aktualisieren, Einnahmen auszahlen, Kennzahlen setzen.
 import { TICKS_PER_SECOND, type Game } from '../../core';
+import { PROGRESSION_CONFIG } from './config';
+import type { SdgTracker } from './sdg';
 
-/** Grundeinkommen in €/s (auch ohne Verschmutzung). */
-export const BASE_INCOME = 1;
-/** Zusätzliche €/s pro Verschmutzungs-Einheit (Summe über die ganze Karte). */
-export const POLLUTION_INCOME = 0.02;
-/** Bei dieser Gesamtverschmutzung sind die SDGs zu ~63 % verfehlt (1 − 1/e). */
-export const SDG_SCALE = 2000;
+const C = PROGRESSION_CONFIG.economy;
 
-export const STAT_SDG_TOTAL = 'progression:sdg_total';
 export const STAT_INCOME = 'progression:income';
+export const STAT_MULTIPLIER = 'progression:multiplier';
 
-/** Wie stark die SDGs verfehlt werden, 0..100 %. */
-export function sdgFailure(totalPollution: number): number {
-  return 100 * (1 - Math.exp(-Math.max(0, totalPollution) / SDG_SCALE));
+/** Multiplikator aus der SDG-Verfehlung (0..100 %) → 1..3 */
+export function incomeMultiplier(sdgTotal: number): number {
+  return 1 + Math.max(0, sdgTotal) / C.multiplierDivisor;
 }
 
-/** Einnahmen in €/s. Satire: Umweltzerstörung lohnt sich. */
-export function incomePerSecond(totalPollution: number): number {
-  return BASE_INCOME + POLLUTION_INCOME * Math.max(0, totalPollution);
+/** Einnahmen in €/s. */
+export function incomePerSecond(totalPollution: number, sdgTotal: number): number {
+  return (C.baseIncome + C.pollutionIncome * Math.max(0, totalPollution)) * incomeMultiplier(sdgTotal);
 }
 
-export function setupEconomy(game: Game): void {
-  game.stats.define({ id: STAT_SDG_TOTAL, label: 'SDG-Verfehlung', unit: '%', group: 'sdg' });
+export function setupEconomy(game: Game, sdg: SdgTracker): void {
   game.stats.define({ id: STAT_INCOME, label: 'Einnahmen', unit: '€/s', group: 'economy' });
+  game.stats.define({ id: STAT_MULTIPLIER, label: 'Umweltsünden-Multiplikator', unit: '×', group: 'economy' });
 
   // Bruchteile von Euro sammeln, damit nur ganze Beträge ausgezahlt werden
   let carry = 0;
 
   const update = (pay: boolean) => {
-    const total = game.env.total('pollution');
-    const income = incomePerSecond(total);
-    game.stats.set(STAT_SDG_TOTAL, Math.round(sdgFailure(total) * 10) / 10);
+    sdg.update();
+    const income = incomePerSecond(game.env.total('pollution'), sdg.total);
     game.stats.set(STAT_INCOME, Math.round(income * 100) / 100);
+    game.stats.set(STAT_MULTIPLIER, Math.round(incomeMultiplier(sdg.total) * 100) / 100);
     if (!pay) return;
     carry += income;
     const whole = Math.floor(carry);
