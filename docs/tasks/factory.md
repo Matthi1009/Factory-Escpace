@@ -54,12 +54,12 @@ Alles, was Rohstoffe bewegt und verwandelt, plus die Energie dafür.
 - [x] Müll als Nebenprodukt; Müllkippe (gratis, verschmutzt) und Entsorgungsanlage (kostet Geld, `waste_disposal`)
 
 ### M3 – Endgame
-- [ ] Atomkraftwerk (`reactor`, Uran-Brennstab, Atommüll), Uranverarbeitung
-- [ ] KI-Rechenzentrum (`datacenter`, Wasserverbrauch) + KI-Automatisierung (z. B. Maschinen schneller, wenn `ai_automation` erforscht)
-- [ ] Öko-Varianten (Ofen, Kraftwerk) mit Tag `eco`
-- [ ] Seilbahn (zwei Stationen, Transport über Distanz)
-- [ ] Raketenteil-Rezept (`rocket`)
-- [ ] Balancing: Verschmutzungsraten, Strom, Rezeptzeiten
+- [x] Atomkraftwerk (`reactor`, Uran-Brennstab, Atommüll), Uranverarbeitung
+- [x] KI-Rechenzentrum (`datacenter`, Wasserverbrauch) + KI-Automatisierung (z. B. Maschinen schneller, wenn `ai_automation` erforscht)
+- [x] Öko-Varianten (Ofen, Kraftwerk) mit Tag `eco`
+- [x] Seilbahn (zwei Stationen, Transport über Distanz)
+- [x] Raketenteil-Rezept (`rocket`)
+- [x] Balancing: Verschmutzungsraten, Strom, Rezeptzeiten (alle Werte zentral in `src/features/factory/balance.ts`)
 
 ## Allein testen
 1. `npm run dev`, F1 öffnen → „+100 jedes Item“.

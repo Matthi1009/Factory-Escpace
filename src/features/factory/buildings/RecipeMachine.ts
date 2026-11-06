@@ -1,14 +1,15 @@
 // Gemeinsame Basis für Maschinen, die ein Rezept abarbeiten (Ofen, Montagemaschine).
 // Eingangspuffer → Auftrag (Zeit, ggf. Strom) → Ausgang nach vorne, Müll seitlich/hinten.
-import { BaseBuilding, opposite, rotateCCW, rotateCW, TICKS_PER_SECOND, type Direction, type ItemId, type RecipeDef } from '../../../core';
+import { BaseBuilding, TICKS_PER_SECOND, type Direction, type ItemId, type RecipeDef } from '../../../core';
 import type { Pullable, Previewable } from '../transfer';
+import { BALANCE } from '../balance';
+import { aiFactor } from '../state';
+import { BYPRODUCTS, flushWasteBox } from '../waste';
 
 /** Eingangspuffer je Zutat = Rezeptmenge × dieser Faktor */
 const INPUT_BUFFER_FACTOR = 2;
-/** Nebenprodukte: gehen nicht nach vorne, sondern an die Seiten/nach hinten (Müllkippe, Entsorgung) */
-const BYPRODUCTS = new Set<ItemId>(['waste', 'nuclear_waste']);
 /** So viel Müll darf liegen bleiben, bevor die Maschine stoppt */
-const WASTE_CAP = 4;
+const WASTE_CAP = BALANCE.waste.machineCap;
 
 export abstract class RecipeMachine extends BaseBuilding implements Pullable, Previewable {
   protected recipe: RecipeDef | null = null;
@@ -56,7 +57,7 @@ export abstract class RecipeMachine extends BaseBuilding implements Pullable, Pr
 
   tick(): void {
     if (this.outbox.length > 0 && this.pushForward(this.outbox[0]!)) this.outbox.shift();
-    this.flushWaste();
+    flushWasteBox(this, this.wasteBox);
 
     const r = this.recipe;
     if (!r) return;
@@ -73,7 +74,7 @@ export abstract class RecipeMachine extends BaseBuilding implements Pullable, Pr
     const f = this.powerKw > 0 ? this.game.power.consume(this.powerKw) : 1;
     this.lastPower = f;
     if (f <= 0) return;
-    this.progress += (f * this.speed) / (r.time * TICKS_PER_SECOND);
+    this.progress += (f * this.speed * aiFactor(this.game)) / (r.time * TICKS_PER_SECOND);
     if (this.pollutionPerSecond > 0) this.game.env.add('pollution', this.x, this.y, (this.pollutionPerSecond * f) / TICKS_PER_SECOND);
     if (this.progress >= 1) {
       this.progress = null;
@@ -116,19 +117,6 @@ export abstract class RecipeMachine extends BaseBuilding implements Pullable, Pr
     this.outbox = [];
     this.wasteBox = [];
     this.progress = null;
-  }
-
-  /** Müll darf nach links, rechts und hinten – nie nach vorne (dort läuft die Produktion). */
-  private flushWaste(): void {
-    const w = this.wasteBox[0];
-    if (w === undefined) return;
-    const dirs: Direction[] = [rotateCW(this.dir), rotateCCW(this.dir), opposite(this.dir)];
-    for (const d of dirs) {
-      if (this.pushTo(d, w)) {
-        this.wasteBox.shift();
-        return;
-      }
-    }
   }
 
   private canStart(r: RecipeDef): boolean {

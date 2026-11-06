@@ -1,10 +1,11 @@
 // Montagemaschine: Rezept frei wählbar (Linksklick → Auswahldialog), braucht Strom.
 import { drawItem, type BuildingDef, type BuildingInit, type ItemId, type RecipeDef } from '../../../core';
 import { ASSEMBLER_ID } from '../recipes';
+import { BALANCE } from '../balance';
 import { RecipeMachine } from './RecipeMachine';
 
 export class Assembler extends RecipeMachine {
-  protected override powerKw = 75;
+  protected override powerKw: number = BALANCE.assembler.kw;
 
   constructor(init: BuildingInit) {
     super(init);

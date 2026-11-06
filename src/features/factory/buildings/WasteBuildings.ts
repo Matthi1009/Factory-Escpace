@@ -1,13 +1,14 @@
 // Müll-Gebäude: Müllkippe (gratis, verschmutzt) und Entsorgungsanlage (kostet Geld, sauber).
+import { BALANCE } from '../balance';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type ItemId } from '../../../core';
 
 const WASTE_ITEMS = new Set<ItemId>(['waste', 'nuclear_waste']);
 /** Verschmutzung pro abgekipptem Müll (Richtwert der Doku) */
-const DUMP_POLLUTION = 2;
+const DUMP_POLLUTION = BALANCE.waste.dumpPollution;
 /** Strahlung pro abgekipptem Atommüll */
-const DUMP_RADIATION = 5;
+const DUMP_RADIATION = BALANCE.waste.dumpRadiation;
 /** Entsorgungskosten in € */
-const DISPOSAL_COST: Record<string, number> = { waste: 5, nuclear_waste: 40 };
+const DISPOSAL_COST = BALANCE.waste.disposalCost;
 
 export class Dump extends BaseBuilding {
   private dumped = 0;

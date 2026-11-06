@@ -2,10 +2,11 @@
 // verarbeitet es und gibt das Ergebnis nach vorne aus. Verschmutzt, solange er arbeitet.
 import { type BuildingDef, type BuildingInit, type ItemId, type RecipeDef } from '../../../core';
 import { FURNACE_ID } from '../recipes';
+import { BALANCE } from '../balance';
 import { RecipeMachine } from './RecipeMachine';
 
 export class Furnace extends RecipeMachine {
-  protected override pollutionPerSecond = 0.5;
+  protected override pollutionPerSecond: number = BALANCE.furnace.pollution;
 
   constructor(init: BuildingInit) {
     super(init);

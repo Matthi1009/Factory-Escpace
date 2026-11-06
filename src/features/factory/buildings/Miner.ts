@@ -1,18 +1,20 @@
 // Abbaumaschine Mk1: nur auf Erz baubar, läuft mit Kohle (Mk2 mit Strom folgt in M2).
 // Kohle kommt per Band/Greifarm oder per Linksklick aus dem Inventar. Baut das Erz unter sich ab und gibt es nach vorne aus.
 import type { Refuelable } from '../transfer';
+import { BALANCE } from '../balance';
+import { aiFactor } from '../state';
 import { BaseBuilding, type BuildingDef, type BuildingInit, type Direction, type Game, type ItemId, TICKS_PER_SECOND } from '../../../core';
 
 /** Ticks pro Erz (120 → 0,5 Erz/s) */
-const MINE_TICKS = 120;
+const MINE_TICKS = BALANCE.miner.mk1Ticks;
 /** So viele Erze werden maximal gepuffert, bevor die Maschine wartet */
-const MAX_BUFFER = 3;
+const MAX_BUFFER = BALANCE.miner.buffer;
 /** Wie viele Erze 1 Kohle für den Mk1 reicht (8 · 2 s = 16 s Laufzeit) */
-export const ORE_PER_COAL = 8;
+export const ORE_PER_COAL = BALANCE.miner.orePerCoal;
 /** Kohle-Vorrat, den der Mk1 maximal hält */
-export const MAX_COAL = 5;
+export const MAX_COAL = BALANCE.miner.mk1CoalCapacity;
 /** Verschmutzung pro Sekunde, solange der Mk1 Kohle verbrennt */
-const POLLUTION_PER_SECOND = 0.3;
+const POLLUTION_PER_SECOND = BALANCE.miner.mk1Pollution;
 
 export class Miner extends BaseBuilding implements Refuelable {
   private progress = 0;
@@ -57,7 +59,7 @@ export class Miner extends BaseBuilding implements Refuelable {
       this.coal--;
       this.burn = ORE_PER_COAL;
     }
-    this.progress++;
+    this.progress += aiFactor(this.game);
     this.game.env.add('pollution', this.x, this.y, POLLUTION_PER_SECOND / TICKS_PER_SECOND);
     if (this.progress >= MINE_TICKS) {
       this.progress = 0;
