@@ -25,9 +25,10 @@ export class Inserter extends BaseBuilding {
       const source = asPullable(this.neighborBuilding(opposite(this.dir)));
       const target = this.buildingInFront();
       if (!source || !target || !target.acceptItem) return;
-      const item = source.peekItem();
-      if (item === null || !targetWouldAccept(target, item, opposite(this.dir))) return;
-      this.held = source.takeItem();
+      // Nur ein Item nehmen, das das Ziel gerade annimmt (sonst blockiert z. B. ein gemischtes Lager)
+      const accept = (it: ItemId) => targetWouldAccept(target, it, opposite(this.dir));
+      if (source.peekItem(accept) === null) return;
+      this.held = source.takeItem(accept);
     }
     if (this.held === null) return;
     if (this.t < 1) {

@@ -44,6 +44,10 @@ export class Miner extends BaseBuilding implements Refuelable {
     return n > 0 ? n : 0;
   }
 
+  fuelFull(): boolean {
+    return this.coal >= MAX_COAL;
+  }
+
   onRemove(): void {
     if (this.coal > 0) this.game.inventory.add('coal', this.coal);
     this.coal = 0;

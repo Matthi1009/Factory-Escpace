@@ -33,7 +33,7 @@ export function register(game: Game): void {
       openRecipeDialog(game, building); // Rezept wählen
     } else if (isRefuelable(building)) {
       // Brennstoff aus dem Inventar nachfüllen (Abbaumaschine Mk1, Kohlekraftwerk: Kohle; Atomkraftwerk: Brennstäbe)
-      if (building.refuel() === 0) game.notify(`${building.def.name}: kein passender Brennstoff im Inventar oder Vorrat voll`, 'warn');
+      if (building.refuel() === 0) game.notify(`${building.def.name}: ${building.fuelFull() ? 'Brennstoffvorrat ist schon voll' : 'kein passender Brennstoff im Inventar'}`, 'warn');
     }
   });
 

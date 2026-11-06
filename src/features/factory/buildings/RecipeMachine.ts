@@ -47,12 +47,13 @@ export abstract class RecipeMachine extends BaseBuilding implements Pullable, Pr
     return true;
   }
 
-  peekItem(): ItemId | null {
-    return this.outbox[0] ?? null;
+  peekItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    const i = this.outbox[0];
+    return i !== undefined && (!accept || accept(i)) ? i : null;
   }
 
-  takeItem(): ItemId | null {
-    return this.outbox.shift() ?? null;
+  takeItem(accept?: (item: ItemId) => boolean): ItemId | null {
+    return this.peekItem(accept) === null ? null : (this.outbox.shift() ?? null);
   }
 
   tick(): void {

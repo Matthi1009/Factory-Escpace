@@ -15,6 +15,7 @@ export class CoalPlant extends BaseBuilding implements Refuelable {
   private coal = 0;
   private burn = 0;
   private running = false;
+  private load = 0;
   private warned = false;
 
   constructor(init: BuildingInit) {
@@ -33,22 +34,24 @@ export class CoalPlant extends BaseBuilding implements Refuelable {
     return n > 0 ? n : 0;
   }
 
+  fuelFull(): boolean {
+    return this.coal >= MAX_COAL;
+  }
+
   onRemove(): void {
     if (this.coal > 0) this.game.inventory.add('coal', this.coal);
     this.coal = 0;
   }
 
   tick(): void {
-    // Läuft nur, wenn im letzten Tick Strom gebraucht wurde (kein sinnloses Verbrennen)
-    const needed = this.game.power.demand > 0;
+    // Das Kraftwerk liefert immer Leistung, solange es Kohle hat (sonst gäbe es nie ein Netz, auf das
+    // z. B. Türme warten). Brennstoff und Verschmutzung richten sich nach der Auslastung (mindestens idleLoad).
+    const p = this.game.power;
+    const load = Math.min(1, Math.max(BALANCE.coalPlant.idleLoad, p.production > 0 ? p.demand / p.production : 0));
     this.running = false;
-    if (!needed) {
-      this.warned = false;
-      return;
-    }
     if (this.burn <= 0) {
       if (this.coal <= 0) {
-        if (!this.warned) {
+        if (p.demand > 0 && !this.warned) {
           this.warned = true;
           this.game.notify(`Kohlekraftwerk (${this.x}|${this.y}) ohne Kohle!`, 'warn');
         }
@@ -57,16 +60,17 @@ export class CoalPlant extends BaseBuilding implements Refuelable {
       this.coal--;
       this.burn = BURN_TICKS;
     }
-    this.burn--;
+    this.burn -= load;
+    this.load = load;
     this.running = true;
     this.warned = false;
-    this.game.power.produce(PLANT_KW);
-    this.game.env.add('pollution', this.x, this.y, POLLUTION_PER_SECOND / TICKS_PER_SECOND);
+    p.produce(PLANT_KW);
+    this.game.env.add('pollution', this.x, this.y, (POLLUTION_PER_SECOND * load) / TICKS_PER_SECOND);
   }
 
   info(): string[] {
     const lines = [`Kohle: ${this.coal}/${MAX_COAL}`];
-    lines.push(this.running ? `Läuft: ${PLANT_KW} kW` : this.coal <= 0 && this.burn <= 0 ? 'Ohne Kohle' : 'Bereit (kein Strombedarf)');
+    lines.push(this.running ? `Läuft: ${PLANT_KW} kW, Auslastung ${Math.round(this.load * 100)} %` : 'Ohne Kohle');
     lines.push(`Netz: ${Math.round(this.game.power.satisfaction * 100)} % versorgt`);
     return lines;
   }
