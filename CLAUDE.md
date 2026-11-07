@@ -13,7 +13,7 @@ npm run build      # Modulgrenzen-Check + Typecheck + Produktions-Build → MUSS
 ```
 
 ## HARTE REGELN
-1. Arbeite **nur in deinem Feature-Ordner** `src/features/<modul>/`. Einzige Ausnahmen: Häkchen in deiner Task-Datei `docs/tasks/<modul>.md` und neue Tasten in der Tabelle unten.
+1. Arbeite **nur in deinem Feature-Ordner** `src/features/<modul>/`. Einzige Ausnahmen: Häkchen in deiner Task-Datei `docs/tasks/<modul>.md` und neue Tasten in der Tabelle unten. **In Runde 2 gilt stattdessen die Dateien-Tabelle in `docs/ROUND2.md` (Abschnitt „Runde 2“ unten): jede Datei gehört genau einem Paket.**
 2. **Nie ändern:** `src/core/`, `src/main.ts`, `package.json`, `package-lock.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `scripts/`, `.github/`, Dateien anderer Module.
 3. **Keine Imports aus anderen Feature-Ordnern.** Importiere nur aus dem eigenen Ordner und aus `'../../core'` (der Build prüft das).
 4. **Neue IDs immer mit Modul-Präfix:** `factory:belt`, `environment:monster`, `progression:pr_campaign`, `ui:…`. Ohne Präfix nur die zentralen IDs aus `src/core/content/`.
@@ -80,26 +80,46 @@ game.input.onKey(code,fn) isDown(code)  game.interaction.select(defId) selected 
 ```
 
 ## Tastenbelegung
-Codes = `KeyboardEvent.code`. Neue Tasten **hier eintragen** (im eigenen PR) und mit `game.input.onKey` registrieren.
+Codes = `KeyboardEvent.code`. Neue Tasten **hier eintragen** (im eigenen PR) und mit `game.input.onKey` registrieren. **Runde 2: Die Tabelle ist schon vollständig (Spielfigur, Waffe, Karte, Pause); niemand ändert sie, siehe `docs/ROUND2.md` Abschnitt 5.**
 
 | Taste | Funktion | Besitzer |
 |---|---|---|
-| W A S D / Pfeile | Kamera bewegen (Shift = schneller) | core |
+| W A S D | Spielfigur bewegen (ab Runde 2) | player |
+| Pfeiltasten | Kamera bewegen, **nur im freien Kameramodus** (F1-Debugpanel); Shift = schneller | core |
 | Mausrad | Zoom zum Mauszeiger | core |
-| Mittlere Maustaste ziehen | Kamera verschieben | core |
-| Linksklick | Bauen (mit Auswahl, Ziehen = mehrere) / Erz abbauen / Gebäude anklicken (`buildingClicked`) | core |
-| Rechtsklick | Abreißen (Kosten zurück), Ziehen = mehrere | core |
+| Mittlere Maustaste ziehen | Kamera verschieben, nur im freien Kameramodus | core |
+| Linksklick | Bauen (mit Auswahl, Ziehen = mehrere) / Erz abbauen / Gebäude anklicken (`buildingClicked`); ab Runde 2 nur **in Reichweite** (10 Kacheln) | core |
+| Rechtsklick | Abreißen (Kosten zurück), Ziehen = mehrere; ab Runde 2 nur in Reichweite | core |
 | Q | Pipette: Gebäudetyp unter der Maus wählen | core |
 | R / Shift+R | Drehen (Auswahl oder Gebäude unter der Maus) | core |
 | P | Pause | core |
-| Esc | Auswahl/Werkzeug aufheben (UI darf zusätzlich Fenster schließen) | core |
+| Leertaste | Schießen (Richtung Maus, verbraucht Munition; gedrückt halten = Dauerfeuer) | player |
+| Esc | Auswahl/Werkzeug aufheben; sonst Fenster schließen; sonst Pausemenü | core / ui |
 | F1 | Debugpanel | core |
 | 1–9 | Bauleiste | ui |
 | E | Inventar | ui |
 | C | Crafting-Menü | ui |
 | K | Aktionen-Menü | ui |
 | N | Minimap ein-/ausblenden | ui |
-| M | Menü (pausiert) | ui |
-| H | Hilfe / Tastenübersicht | ui |
+| M | Große Karte (Menü: Esc oder ☰) | ui |
+| H | Steuerung / Hilfe | ui |
 | T | Forschung | ui |
 | Tab | Umwelt- und SDG-Übersicht | ui |
+
+## Runde 2: Factorio-Look, Spielfigur, Verteidigung, Karte, Hauptmenü
+Alles Wichtige steht in **[docs/ROUND2.md](docs/ROUND2.md)**: Ziele, Stilvorgabe, API-Verträge mit Fallbacks, Tasten, **welche Datei welchem Paket gehört**, Ablauf und Testen. Vier Pakete arbeiten gleichzeitig, jedes in eigenen Dateien:
+
+| Paket | Branch | Aufgabendatei |
+|---|---|---|
+| ui-menu-map | `r2/ui-menu-map` | [docs/tasks/r2-ui-menu-map.md](docs/tasks/r2-ui-menu-map.md) |
+| player-defense | `r2/player-defense` | [docs/tasks/r2-player-defense.md](docs/tasks/r2-player-defense.md) |
+| art-world | `r2/art-world` | [docs/tasks/r2-art-world.md](docs/tasks/r2-art-world.md) |
+| art-factory | `r2/art-factory` | [docs/tasks/r2-art-factory.md](docs/tasks/r2-art-factory.md) |
+
+Regeln für Runde 2 (Kurzfassung):
+- **Nur eigene Dateien ändern.** Auch jede gemeinsame Core-Datei hat genau einen Eigentümer (ROUND2.md 6.1). Brauchst du eine fremde Datei: Issue-Text mit Label `core-request`, mit dem **Fallback** (ROUND2.md 4.0) weitermachen.
+- **Grafik nur in `art/`-Dateien** und nur in den Ordnern, die deinem Paket gehören. Die `draw()`-Methode eines Gebäudes ruft nur eine Funktion aus `art/` auf. **Logik bleibt unverändert.** Logikfehler: GitHub-Issue statt selbst reparieren.
+- Neue Funktionen kommen in **neue Dateien**; neue Core-Dateien per **Tiefenpfad** importieren (`'../../core/state/Settings'`), `src/core/index.ts` ändert niemand.
+- Vor jedem PR `git pull origin main`, `npm run build` grün, Merge mit `gh pr merge --merge`. **Zuerst M0** (klein, schnell mergen), **STOPP nach M1**, dann M2 und M3.
+- Stil: schräge Draufsicht, Licht oben links, gedeckte Farben (Erdbraun, Rost, Stahlgrau, Ölschwarz, ausgeblichenes Warngelb), kräftig nur Glut/Strom/Strahlung/Status, **nicht verspielt**. Tasten: siehe Tabelle oben.
+- Ziel: 60 FPS mit 500 Gebäuden (Headless-Benchmark in ROUND2.md Abschnitt 8, Referenz 5,6 ms/Frame).
