@@ -20,8 +20,13 @@ export const ENV_CONFIG = {
     maxAlpha: 0.65,
   },
   monsters: {
-    /** Unter dieser Gesamtverschmutzung spawnen keine Monster */
-    spawnThreshold: 300,
+    /** Unter dieser Gesamtverschmutzung spawnen keine Monster (Issue #14: 300 war zu früh) */
+    spawnThreshold: 500,
+    /** Ab diesem Anteil der Schwelle kommt eine Vorwarnung mit Handlungshinweis */
+    earlyWarningFraction: 0.6,
+    /** Angriffe auf Gebäude weiter als so viele Kacheln vom Wrack werden als „Außenposten“ gemeldet */
+    outpostDistance: 25,
+    outpostNoticeSeconds: 30,
     /** Monster pro Minute je Verschmutzungs-Einheit über der Schwelle */
     spawnPerMinutePerPollution: 1 / 400,
     /** Höchstens so viele Monster gleichzeitig */
@@ -104,6 +109,8 @@ export const ENV_CONFIG = {
       startAmmo: 30,
       maxAmmo: 200,
     },
+    /** Notfall-Laser des Wracks: schwache Eigenverteidigung, damit ein Fehler nicht sofort das Ende ist */
+    wreckLaser: { range: 7, damage: 12, cooldownTicks: 90 },
     forceField: {
       cost: { circuit: 20, steel: 20 },
       maxHp: 600,
@@ -119,14 +126,20 @@ export const ENV_CONFIG = {
   waves: {
     /** Abstand zwischen zwei Angriffswellen in Sekunden */
     intervalSeconds: 240,
-    /** Erste Welle frühestens nach so vielen Sekunden über der Spawn-Schwelle */
-    firstDelaySeconds: 180,
+    /** Erste Welle frühestens nach so vielen Sekunden über der Spawn-Schwelle (Issue #14: 180 war zu früh) */
+    firstDelaySeconds: 420,
     warningSeconds: 20,
-    /** Größe: base + (Σ − Schwelle) / perPollution + perWave × Wellennummer, höchstens max */
+    /** Größe: base + (Σ − Schwelle) / perPollution + perWave × Wellennummer, höchstens max + maxPerWave × Wellennummer */
     base: 3,
     perPollution: 150,
-    perWave: 1,
+    perWave: 2,
     max: 40,
+    maxPerWave: 8,
+    /** Ab dieser Welle werden Monster zäher: +hpPerWave Lebenspunkte (Anteil) pro weiterer Welle */
+    toughenFromWave: 4,
+    hpPerWave: 0.15,
+    /** Ab dieser Welle greifen Wellen aus zwei Richtungen an */
+    splitFromWave: 5,
     /** Spawn-Entfernung zum Wrack */
     distance: 34,
   },

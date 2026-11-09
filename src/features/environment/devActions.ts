@@ -17,6 +17,7 @@ export function registerDevActions(game: Game, monsters: MonsterManager, waves: 
     description: 'Spawnt 5 Käfer in 25 Kacheln Abstand zum Wrack',
     category: 'debug',
     run: (g) => {
+      monsters.field.ensure();
       const c = g.wreck?.center() ?? g.world.spawn;
       let n = 0;
       for (let k = 0; k < 200 && n < 5; k++) {

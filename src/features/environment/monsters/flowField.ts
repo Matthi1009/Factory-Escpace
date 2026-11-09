@@ -28,6 +28,13 @@ export class FlowField {
     this.dirty = true;
   }
 
+  /** Sofort neu berechnen, falls nötig (z. B. bevor direkt nach Spielstart Monster gespawnt werden). */
+  ensure(): void {
+    if (!this.dirty) return;
+    this.dirty = false;
+    this.recalc();
+  }
+
   /** Neu berechnen, falls sich Gebäude geändert haben (höchstens alle fieldRecalcTicks). */
   update(): void {
     if (!this.dirty || this.game.tickCount % ENV_CONFIG.monsters.fieldRecalcTicks !== 0) return;

@@ -4,6 +4,7 @@ import { createRng, TICKS_PER_SECOND, type Building, type Game } from '../../../
 import { ENV_CONFIG } from '../config';
 import { FlowField } from './flowField';
 import { chooseMonsterType, MUTANT_BEETLE, type MonsterType } from './types';
+import { directionName } from './direction';
 
 const C = ENV_CONFIG.monsters;
 
@@ -17,6 +18,8 @@ export interface Monster {
   prevX: number;
   prevY: number;
   hp: number;
+  /** Lebenspunkte beim Spawnen (kann über type.maxHp liegen, z. B. bei späten Wellen) */
+  maxHp: number;
   /** Blickrichtung in Radiant */
   angle: number;
   cooldown: number;
@@ -39,6 +42,8 @@ export class MonsterManager {
   private lastSpawnTick = -Infinity;
   private seenTypes = new Set<string>([MUTANT_BEETLE.id]);
   private kills = 0;
+  private lastOutpostTick = -Infinity;
+  private earlyWarned = false;
   /** Wird aufgerufen, wenn ein Monster stirbt (z. B. für Effekte) */
   onDeath: ((m: Monster) => void) | null = null;
   /** Geschützte Gebäude (z. B. im Kraftfeld) können nicht beschädigt werden */
@@ -56,7 +61,7 @@ export class MonsterManager {
   }
 
   /** Erzeugt ein Monster auf Kachel (x, y). Auch für Tests/Konsole: game-Zugriff über window.game ist nicht nötig. */
-  spawn(x: number, y: number, type: MonsterType = MUTANT_BEETLE): Monster {
+  spawn(x: number, y: number, type: MonsterType = MUTANT_BEETLE, hpFactor = 1): Monster {
     const m: Monster = {
       id: this.nextId++,
       type,
@@ -64,7 +69,8 @@ export class MonsterManager {
       y: y + 0.5,
       prevX: x + 0.5,
       prevY: y + 0.5,
-      hp: type.maxHp,
+      hp: type.maxHp * hpFactor,
+      maxHp: type.maxHp * hpFactor,
       angle: 0,
       cooldown: 0,
       lunge: 0,
@@ -101,6 +107,13 @@ export class MonsterManager {
   private spawnTick(): void {
     if (this.game.tickCount % TICKS_PER_SECOND !== 0) return; // einmal pro Sekunde
     const total = this.game.env.total('pollution');
+    if (!this.earlyWarned && total >= C.spawnThreshold * C.earlyWarningFraction) {
+      this.earlyWarned = true;
+      this.game.notify(
+        'Die Tiere am Rand des Smogs werden unruhig – bald mutieren sie. Erforsche Mauern und Geschütztürme (T)!',
+        'warn',
+      );
+    }
     if (total < C.spawnThreshold || this.monsters.length >= C.maxAlive) {
       this.spawnBudget = 0;
       return;
@@ -117,7 +130,7 @@ export class MonsterManager {
         this.seenTypes.add(type.id);
         this.game.notify(`Neue Mutation: ${type.name} – ${type.description}!`, 'warn');
       } else if (now - this.lastSpawnTick > C.waveNoticeGap * TICKS_PER_SECOND) {
-        this.game.notify('Mutierte Tiere kriechen aus dem Smog auf die Basis zu!', 'warn');
+        this.game.notify('Mutierte Tiere kriechen aus dem Smog auf die Basis zu! Mauern und Geschütztürme schützen (T).', 'warn');
       }
       this.lastSpawnTick = now;
     }
@@ -206,12 +219,28 @@ export class MonsterManager {
     m.angle = Math.atan2(dy, dx);
   }
 
+  /** Angriffe weit weg vom Wrack melden (Issue #14: Außenposten gingen sonst still verloren). */
+  private reportOutpost(b: Building): void {
+    const g = this.game;
+    if (g.tickCount - this.lastOutpostTick < C.outpostNoticeSeconds * TICKS_PER_SECOND) return;
+    const wc = g.wreck?.center() ?? g.world.spawn;
+    const c = b.center();
+    const d = Math.hypot(c.x - wc.x, c.y - wc.y);
+    if (d < C.outpostDistance) return;
+    this.lastOutpostTick = g.tickCount;
+    g.notify(
+      `Monster greifen einen Außenposten an: ${b.def.name}, ${Math.round(d)} Kacheln ${directionName(Math.atan2(c.y - wc.y, c.x - wc.x))}!`,
+      'warn',
+    );
+  }
+
   private attack(m: Monster, b: Building, cx: number, cy: number): void {
     m.angle = Math.atan2(cy - m.y, cx - m.x);
     if (m.cooldown > 0) return;
     m.cooldown = m.type.attackTicks;
     m.lunge = 1;
     if (this.isProtected(b)) return;
+    this.reportOutpost(b);
     this.game.damageBuilding(b, m.type.damage);
   }
 
@@ -249,8 +278,8 @@ export class MonsterManager {
           drawBeetle(ctx, t, r, wiggle);
       }
       ctx.restore();
-      if (m.hp < t.maxHp) {
-        const f = Math.max(0, m.hp / t.maxHp);
+      if (m.hp < m.maxHp) {
+        const f = Math.max(0, m.hp / m.maxHp);
         ctx.fillStyle = 'rgba(0,0,0,0.7)';
         ctx.fillRect(x - 0.3, y - r - 0.2, 0.6, 0.08);
         ctx.fillStyle = '#ff3b30';
