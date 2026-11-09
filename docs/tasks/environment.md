@@ -68,6 +68,7 @@ Notizen M2/M3 (alle Werte in `config.ts`):
 - **Wellen** (`monsters/waves.ts`): erste nach 3 min über der Spawn-Schwelle, dann alle 4 min, 20 s Vorwarnung mit Richtung + rotem Pfeil, Größe wächst mit Verschmutzung und Wellennummer. Kennzahl `environment:wave`.
 - Performance: 200 Monster inkl. Klima/Terrain/Smog ≈ 0,22 ms/Tick.
 - Dev-Aktionen: „Jede Mutation einmal spawnen“, „Angriffswelle ankündigen“.
+- **Balancing nach Issue #14:** Spawn-Schwelle 500 (Vorwarnung mit Hinweis „Mauern/Türme (T)“ ab 60 %), erste Welle nach 7 min über der Schwelle, Notfall-Laser am Wrack (`defense/wreckLaser.ts`), Wellen wachsen weiter (Obergrenze 40 + 8 × Welle, +2 je Welle), ab Welle 4 +15 % Lebenspunkte je Welle, ab Welle 5 aus zwei Richtungen, Meldung bei Angriffen auf Außenposten (> 25 Kacheln vom Wrack).
 
 ## Allein testen
 1. `npm run dev`, F1 → Umwelt-Pinsel: Feld `pollution`, „Am Mauszeiger erhöhen“ aktivieren, linke Maustaste gedrückt halten → Verschmutzung erzeugen (rechte Maustaste senkt). Esc beendet den Pinsel.

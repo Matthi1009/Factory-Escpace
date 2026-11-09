@@ -2,17 +2,17 @@
 // mit Vorwarnung (Meldung + roter Pfeil auf der Karte). Größe wächst mit Verschmutzung und Wellennummer.
 import { createRng, TICKS_PER_SECOND, type Game } from '../../../core';
 import { ENV_CONFIG } from '../config';
+import { directionName } from './direction';
 import type { MonsterManager } from './MonsterManager';
 
 const C = ENV_CONFIG.waves;
-const DIRECTIONS = ['Osten', 'Südosten', 'Süden', 'Südwesten', 'Westen', 'Nordwesten', 'Norden', 'Nordosten'];
 export const STAT_WAVE = 'environment:wave';
 
 export class WaveSystem {
   wave = 0;
   /** Sekunden bis zur nächsten Welle (zählt nur, solange die Verschmutzung über der Spawn-Schwelle liegt) */
   private nextIn = C.firstDelaySeconds;
-  private pending: { angle: number; spawnTick: number; size: number } | null = null;
+  private pending: { angles: number[]; spawnTick: number; size: number } | null = null;
   private rng: () => number;
 
   constructor(private game: Game, private monsters: MonsterManager) {
@@ -30,12 +30,19 @@ export class WaveSystem {
   announce(size?: number): void {
     if (this.pending) return;
     const total = this.game.env.total('pollution');
+    const next = this.wave + 1;
+    const cap = C.max + C.maxPerWave * this.wave;
     const n =
       size ??
-      Math.min(C.max, Math.round(C.base + Math.max(0, total - ENV_CONFIG.monsters.spawnThreshold) / C.perPollution + C.perWave * this.wave));
-    const angle = this.rng() * Math.PI * 2;
-    this.pending = { angle, spawnTick: this.game.tickCount + C.warningSeconds * TICKS_PER_SECOND, size: n };
-    this.game.notify(`Angriffswelle in ${C.warningSeconds} s aus Richtung ${directionName(angle)}: etwa ${n} Monster!`, 'error');
+      Math.min(cap, Math.round(C.base + Math.max(0, total - ENV_CONFIG.monsters.spawnThreshold) / C.perPollution + C.perWave * this.wave));
+    const first = this.rng() * Math.PI * 2;
+    // Ab splitFromWave aus zwei Richtungen (ungefähr gegenüber)
+    const angles = next >= C.splitFromWave ? [first, first + Math.PI * (0.6 + this.rng() * 0.8)] : [first];
+    this.pending = { angles, spawnTick: this.game.tickCount + C.warningSeconds * TICKS_PER_SECOND, size: n };
+    const dirs = angles.map(directionName).join(' und ');
+    const tough = next >= C.toughenFromWave ? ` (zäher: +${Math.round(this.hpFactor(next) * 100 - 100)} % Lebenspunkte)` : '';
+    const hint = next === 1 ? ' Mauern und Geschütztürme (T) helfen.' : '';
+    this.game.notify(`Angriffswelle ${next} in ${C.warningSeconds} s aus Richtung ${dirs}: etwa ${n} Monster${tough}!${hint}`, 'error');
   }
 
   private second(): void {
@@ -46,6 +53,11 @@ export class WaveSystem {
     this.announce();
   }
 
+  /** Lebenspunkte-Faktor der Monster einer Welle */
+  hpFactor(wave: number): number {
+    return 1 + Math.max(0, wave - C.toughenFromWave + 1) * C.hpPerWave;
+  }
+
   private release(): void {
     const p = this.pending!;
     this.pending = null;
@@ -53,15 +65,17 @@ export class WaveSystem {
     this.game.stats.set(STAT_WAVE, this.wave);
     const c = this.game.wreck?.center() ?? this.game.world.spawn;
     let spawned = 0;
+    const hp = this.hpFactor(this.wave);
+    this.monsters.field.ensure();
     for (let tries = 0; tries < p.size * 20 && spawned < p.size; tries++) {
-      const a = p.angle + (this.rng() - 0.5) * 0.5;
+      const a = p.angles[spawned % p.angles.length]! + (this.rng() - 0.5) * 0.5;
       const d = C.distance + (this.rng() - 0.5) * 8;
       const x = Math.floor(c.x + Math.cos(a) * d);
       const y = Math.floor(c.y + Math.sin(a) * d);
       const w = this.game.world;
       if (!w.inBounds(x, y) || w.getTerrain(x, y) === 'water' || w.getBuilding(x, y)) continue;
       if (!Number.isFinite(this.monsters.field.get(x, y))) continue;
-      this.monsters.spawn(x, y, this.monsters.typeAt(x, y));
+      this.monsters.spawn(x, y, this.monsters.typeAt(x, y), hp);
       spawned++;
     }
     this.game.notify(`Welle ${this.wave}: ${spawned} Monster greifen an!`, 'warn');
@@ -72,27 +86,23 @@ export class WaveSystem {
     if (!p) return;
     const c = this.game.wreck?.center() ?? this.game.world.spawn;
     const blink = 0.5 + 0.5 * Math.sin(time * 8);
-    const tip = { x: c.x + Math.cos(p.angle) * (C.distance - 10), y: c.y + Math.sin(p.angle) * (C.distance - 10) };
-    const tail = { x: c.x + Math.cos(p.angle) * C.distance, y: c.y + Math.sin(p.angle) * C.distance };
     ctx.strokeStyle = `rgba(255,60,40,${0.5 + 0.5 * blink})`;
     ctx.fillStyle = ctx.strokeStyle;
     ctx.lineWidth = Math.max(0.3, 4 / zoom);
-    ctx.beginPath();
-    ctx.moveTo(tail.x, tail.y);
-    ctx.lineTo(tip.x, tip.y);
-    ctx.stroke();
-    const back = p.angle + Math.PI;
-    ctx.beginPath();
-    ctx.moveTo(tip.x, tip.y);
-    ctx.lineTo(tip.x + Math.cos(back + 0.4) * 2.5, tip.y + Math.sin(back + 0.4) * 2.5);
-    ctx.lineTo(tip.x + Math.cos(back - 0.4) * 2.5, tip.y + Math.sin(back - 0.4) * 2.5);
-    ctx.closePath();
-    ctx.fill();
+    for (const angle of p.angles) {
+      const tip = { x: c.x + Math.cos(angle) * (C.distance - 10), y: c.y + Math.sin(angle) * (C.distance - 10) };
+      const tail = { x: c.x + Math.cos(angle) * C.distance, y: c.y + Math.sin(angle) * C.distance };
+      ctx.beginPath();
+      ctx.moveTo(tail.x, tail.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.stroke();
+      const back = angle + Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(tip.x, tip.y);
+      ctx.lineTo(tip.x + Math.cos(back + 0.4) * 2.5, tip.y + Math.sin(back + 0.4) * 2.5);
+      ctx.lineTo(tip.x + Math.cos(back - 0.4) * 2.5, tip.y + Math.sin(back - 0.4) * 2.5);
+      ctx.closePath();
+      ctx.fill();
+    }
   }
-}
-
-/** Himmelsrichtung eines Winkels (x nach rechts, y nach unten). */
-function directionName(angle: number): string {
-  const k = Math.round(((angle % (Math.PI * 2)) + Math.PI * 2) / (Math.PI / 4)) % 8;
-  return DIRECTIONS[k]!;
 }

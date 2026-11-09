@@ -7,11 +7,13 @@ import type { MonsterManager } from '../monsters/MonsterManager';
 import { WALL_DEF } from './Wall';
 import { ForceFieldSystem } from './ForceField';
 import { createTurretDef, TURRET_ID } from './Turret';
+import { registerWreckLaser } from './wreckLaser';
 
 export function registerDefense(game: Game, monsters: MonsterManager, effects: Effects, climate: Climate): void {
   game.registries.buildings.register(WALL_DEF);
   game.registries.buildings.register(createTurretDef(monsters, effects));
   new ForceFieldSystem(game, monsters, climate, effects);
+  registerWreckLaser(game, monsters, effects);
 
   // Reichweite anzeigen: beim Bauen eines Turms und beim Zeigen auf einen Turm
   game.renderer.addDrawHook('ui-world', (ctx, view) => {
