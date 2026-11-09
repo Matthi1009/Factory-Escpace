@@ -5,10 +5,17 @@ export const PROGRESSION_CONFIG = {
   economy: {
     /** Grundeinkommen in €/s (auch ohne Verschmutzung) */
     baseIncome: 1,
-    /** Zusätzliche €/s pro Verschmutzungs-Einheit (Summe über die ganze Karte) */
-    pollutionIncome: 0.02,
+    /** Zusätzliche €/s pro Verschmutzungs-Einheit (Summe über die ganze Karte). Issue #13: 0,02 war viel zu viel. */
+    pollutionIncome: 0.004,
     /** Multiplikator = 1 + SDG-Verfehlung(%) / multiplierDivisor → bei 100 % Verfehlung ×3 */
     multiplierDivisor: 50,
+    /**
+     * Betriebskosten in €/s pro Gebäude mit diesem Tag (mehrere Tags addieren sich).
+     * Damit kostet Wachstum Geld, und die Börse lohnt sich.
+     */
+    upkeepByTag: { pollutes: 0.05, power_producer: 0.3, datacenter: 2, reactor: 4 } as Record<string, number>,
+    /** Meldung „Kasse leer“ höchstens so oft (Sekunden) */
+    brokeNoticeSeconds: 60,
   },
   sdg: {
     /** Skalen: bei diesem Wert ist das Ziel zu ~63 % verfehlt (1 − 1/e) */
@@ -29,10 +36,9 @@ export const PROGRESSION_CONFIG = {
     maxConcurrent: 3,
     /** Dauer einer Blockade in Sekunden */
     durationSeconds: 90,
-    /** PR-Kampagne: Grundpreis € × (1 + SDG % / 50) */
+    /** PR-Kampagne: Grundpreis € × (1 + SDG % / 50), mindestens prIncomeSeconds Sekunden Einnahmen */
     prBaseCost: 1000,
-    /** Zweiter Klick auf das blockierte Gebäude innerhalb dieser Zeit bestätigt die PR-Kampagne */
-    confirmSeconds: 4,
+    prIncomeSeconds: 60,
   },
   market: {
     /** Kurse ändern sich alle so viele Sekunden */
