@@ -14,25 +14,25 @@ interface ResearchEntry {
 
 /**
  * Der Baum. Wurzeln: automation, defense_walls.
- * Satire: Öko-Technik ist absichtlich teuer, KI und Atom sind vergleichsweise günstig.
+ * Jede Forschung kostet auch Geld (Issue #13). Satire: Öko-Technik ist absichtlich am teuersten.
  */
 export const RESEARCH_TREE: Record<CoreResearchId, ResearchEntry> = {
-  automation: { cost: { iron_plate: 20, copper_plate: 10 }, time: 10, requires: [] },
-  defense_walls: { cost: { stone: 30, iron_plate: 10 }, time: 10, requires: [] },
-  logistics: { cost: { iron_plate: 40, gear: 10 }, time: 20, requires: ['automation'] },
-  steel: { cost: { iron_plate: 50, coal: 20 }, time: 20, requires: ['automation'] },
-  power_coal: { cost: { iron_plate: 40, copper_plate: 20, stone: 20 }, time: 25, requires: ['automation'] },
-  concrete: { cost: { stone: 50, granite: 30, steel: 10 }, time: 25, requires: ['steel'] },
-  electronics: { cost: { copper_plate: 50, iron_plate: 30, steel: 10 }, time: 30, requires: ['steel'] },
-  turrets: { cost: { iron_plate: 50, gear: 20, copper_plate: 20 }, time: 25, requires: ['defense_walls'] },
-  ropeway: { cost: { steel: 40, gear: 30 }, time: 30, requires: ['logistics'] },
-  waste_management: { cost: { steel: 20, concrete: 20 }, money: 2000, time: 30, requires: ['power_coal'] },
-  eco_tech: { cost: { circuit: 60, steel: 60, concrete: 40 }, money: 15000, time: 90, requires: ['power_coal'] },
-  ai_datacenter: { cost: { circuit: 80, steel: 30 }, money: 3000, time: 45, requires: ['electronics'] },
-  ai_automation: { cost: { circuit: 150 }, time: 60, requires: ['ai_datacenter'] },
-  nuclear: { cost: { circuit: 50, steel: 50, concrete: 50, uranium_ore: 20 }, time: 60, requires: ['power_coal', 'concrete'] },
-  force_field: { cost: { circuit: 60, steel: 40 }, time: 60, requires: ['turrets', 'power_coal'] },
-  rocket: { cost: { circuit: 200, steel: 200, concrete: 100, uranium_fuel: 10 }, time: 120, requires: ['nuclear', 'electronics'] },
+  automation: { cost: { iron_plate: 20, copper_plate: 10 }, money: 200, time: 10, requires: [] },
+  defense_walls: { cost: { stone: 30, iron_plate: 10 }, money: 150, time: 10, requires: [] },
+  logistics: { cost: { iron_plate: 40, gear: 10 }, money: 600, time: 20, requires: ['automation'] },
+  steel: { cost: { iron_plate: 50, coal: 20 }, money: 500, time: 20, requires: ['automation'] },
+  power_coal: { cost: { iron_plate: 40, copper_plate: 20, stone: 20 }, money: 800, time: 25, requires: ['automation'] },
+  concrete: { cost: { stone: 50, granite: 30, steel: 10 }, money: 1000, time: 25, requires: ['steel'] },
+  electronics: { cost: { copper_plate: 50, iron_plate: 30, steel: 10 }, money: 1500, time: 30, requires: ['steel'] },
+  turrets: { cost: { iron_plate: 50, gear: 20, copper_plate: 20 }, money: 800, time: 25, requires: ['defense_walls'] },
+  ropeway: { cost: { steel: 40, gear: 30 }, money: 2500, time: 30, requires: ['logistics'] },
+  waste_management: { cost: { steel: 20, concrete: 20 }, money: 3000, time: 30, requires: ['power_coal'] },
+  eco_tech: { cost: { circuit: 60, steel: 60, concrete: 40 }, money: 25000, time: 90, requires: ['power_coal'] },
+  ai_datacenter: { cost: { circuit: 80, steel: 30 }, money: 6000, time: 45, requires: ['electronics'] },
+  ai_automation: { cost: { circuit: 150 }, money: 12000, time: 60, requires: ['ai_datacenter'] },
+  nuclear: { cost: { circuit: 50, steel: 50, concrete: 50, uranium_ore: 20 }, money: 12000, time: 60, requires: ['power_coal', 'concrete'] },
+  force_field: { cost: { circuit: 60, steel: 40 }, money: 10000, time: 60, requires: ['turrets', 'power_coal'] },
+  rocket: { cost: { circuit: 200, steel: 200, concrete: 100, uranium_fuel: 10 }, money: 30000, time: 120, requires: ['nuclear', 'electronics'] },
 };
 
 export function setupResearch(game: Game): void {

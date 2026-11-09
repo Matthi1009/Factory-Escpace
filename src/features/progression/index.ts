@@ -3,7 +3,7 @@
 import type { Game } from '../../core';
 import { Demonstrations } from './demonstrations';
 import { registerDevActions } from './devActions';
-import { setupEconomy } from './economy';
+import { Economy } from './economy';
 import { StockMarket } from './market';
 import { Meltdown } from './meltdown';
 import { setupResearch } from './research';
@@ -13,8 +13,8 @@ import { SdgTracker } from './sdg';
 export function register(game: Game): void {
   setupResearch(game);
   const sdg = new SdgTracker(game);
-  setupEconomy(game, sdg);
-  const demos = new Demonstrations(game, sdg);
+  const economy = new Economy(game, sdg);
+  const demos = new Demonstrations(game, sdg, economy);
   game.events.on('ready', () => new StockMarket(game)); // erst wenn alle Items registriert sind
   new RocketGoal(game, sdg);
   const meltdown = new Meltdown(game);

@@ -1,9 +1,11 @@
 // Demonstrationen (gewaltfrei!): Demonstranten blockieren ein verschmutzendes Gebäude für eine Weile.
-// Auflösen nur mit Geld: PR-Kampagne (Gebäude zweimal anklicken oder Aktion im Aktionen-Menü).
+// Auflösen nur mit Geld: PR-Kampagne über das Aktionen-Menü (K). Ein Klick auf das Gebäude zahlt nichts,
+// er zeigt nur einen Hinweis (Issue #15: Linksklick dient auch zum Nachfüllen und für das Info-Fenster).
 // Je stärker die SDGs verfehlt werden, desto öfter wird demonstriert.
 import { createRng, TICKS_PER_SECOND, type Building, type Game } from '../../core';
 import { PROGRESSION_CONFIG } from './config';
 import { formatMoney } from './research';
+import type { Economy } from './economy';
 import type { SdgTracker } from './sdg';
 
 const C = PROGRESSION_CONFIG.demonstrations;
@@ -31,6 +33,8 @@ interface Protester {
 interface Demo {
   building: Building;
   people: Protester[];
+  /** Hinweis beim Anklicken schon gezeigt */
+  hinted: boolean;
 }
 
 export const STAT_DEMOS = 'progression:demonstrations';
@@ -38,11 +42,14 @@ export const STAT_DEMOS = 'progression:demonstrations';
 export class Demonstrations {
   readonly demos = new Map<Building, Demo>();
   private rng: () => number;
-  private confirm: { building: Building; untilTick: number } | null = null;
   /** Gebäude, deren Blockade gerade per PR-Kampagne aufgehoben wird (andere Meldung) */
   private resolving = new Set<Building>();
 
-  constructor(private game: Game, private sdg: SdgTracker) {
+  constructor(
+    private game: Game,
+    private sdg: SdgTracker,
+    private economy: Economy,
+  ) {
     this.rng = createRng(game.seed ^ 0xd3e0);
     game.stats.define({ id: STAT_DEMOS, label: 'Demonstrationen', group: 'events' });
     game.stats.set(STAT_DEMOS, 0);
@@ -67,9 +74,9 @@ export class Demonstrations {
     game.renderer.addDrawHook('entities', (ctx, view) => this.draw(ctx, view.time, view.zoom, view.minX, view.minY, view.maxX, view.maxY));
   }
 
-  /** Preis einer PR-Kampagne für eine Demonstration in € */
+  /** Preis einer PR-Kampagne für eine Demonstration in €: Grundpreis nach SDG, mindestens 60 s Einnahmen */
   prCost(): number {
-    return Math.round(C.prBaseCost * (1 + this.sdg.total / 50));
+    return Math.round(Math.max(C.prBaseCost * (1 + this.sdg.total / 50), C.prIncomeSeconds * this.economy.income));
   }
 
   /** Startet eine Demonstration vor b (auch für Tests). */
@@ -89,12 +96,12 @@ export class Demonstrations {
         slogan: i % 2 === 0 ? SLOGANS[Math.floor(this.rng() * SLOGANS.length)]! : null,
       });
     }
-    this.demos.set(b, { building: b, people });
+    this.demos.set(b, { building: b, people, hinted: false });
     this.game.blockBuilding(b, C.durationSeconds * TICKS_PER_SECOND, 'Demonstration');
     this.game.stats.set(STAT_DEMOS, this.demos.size);
     this.game.notify(
       `Demonstration vor ${b.def.name}! Die Produktion steht ${C.durationSeconds} s still. ` +
-        `PR-Kampagne: ${formatMoney(this.prCost())} (Gebäude 2× anklicken oder Aktionen-Menü).`,
+        `PR-Kampagne: ${formatMoney(this.prCost())} im Aktionen-Menü (K).`,
       'warn',
     );
   }
@@ -111,21 +118,19 @@ export class Demonstrations {
   private end(b: Building): void {
     if (!this.demos.delete(b)) return;
     this.game.stats.set(STAT_DEMOS, this.demos.size);
-    if (this.confirm?.building === b) this.confirm = null;
     if (this.resolving.has(b)) return;
     if (!b.removed) this.game.notify(`Die Demonstranten vor ${b.def.name} ziehen weiter. Die Produktion läuft wieder.`, 'info');
   }
 
+  /** Klick auf ein blockiertes Gebäude: nur ein Hinweis (einmal pro Demonstration), nie bezahlen. */
   private onClick(b: Building): void {
-    if (!this.demos.has(b)) return;
-    const now = this.game.tickCount;
-    if (this.confirm && this.confirm.building === b && now <= this.confirm.untilTick) {
-      this.confirm = null;
-      this.campaign([b], this.game);
-      return;
-    }
-    this.confirm = { building: b, untilTick: now + C.confirmSeconds * TICKS_PER_SECOND };
-    this.game.notify(`PR-Kampagne für ${b.def.name}: ${formatMoney(this.prCost())}. Zum Bestätigen nochmal klicken.`, 'info');
+    const demo = this.demos.get(b);
+    if (!demo || demo.hinted) return;
+    demo.hinted = true;
+    this.game.notify(
+      `Vor ${b.def.name} wird demonstriert. Auflösen per PR-Kampagne (${formatMoney(this.prCost())}) im Aktionen-Menü (K).`,
+      'info',
+    );
   }
 
   /** Löst Demonstrationen per PR-Kampagne auf, sofern das Geld reicht. */
